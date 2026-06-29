@@ -1,1131 +1,835 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INTEGA — L'intelligence au cœur de vos administrations</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Intega — CEARA · L'intelligence de l'expérience client</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #0F2240;
-    --navy-mid: #1A3A6B;
-    --gold: #C9A84C;
-    --gold-light: #E8C96A;
-    --gold-pale: #F5E9C8;
-    --white: #FAFAF8;
-    --grey: #8A8F99;
-    --grey-light: #F0F0EC;
-    --dark: #0A1628;
-  }
+:root{
+  --ink:#082628; --ink-2:#0d3a3c; --ink-soft:#16514f;
+  --accent:#7CB342; --accent-bright:#9CCC65;
+  --paper:#FAFAF7; --paper-2:#F1F1EB; --line:#E4E4DC; --line-dark:rgba(255,255,255,.10);
+  --text:#13201f; --muted:#5b6b69; --muted-on-ink:#9fb5b2;
+  --red:#C0392B; --amber:#D68910; --radius:14px; --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;line-height:1.1;letter-spacing:-.02em;font-weight:600}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.mono{font-family:'IBM Plex Mono',monospace}
+.btn{display:inline-flex;align-items:center;gap:9px;font-weight:500;font-size:14.5px;border-radius:10px;padding:11px 20px;cursor:pointer;transition:.2s;border:1px solid transparent;font-family:'Inter'}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover{background:var(--ink-soft);transform:translateY(-1px)}
+.btn-ghost{border-color:var(--line);color:var(--ink);background:transparent}
+.btn-ghost:hover{border-color:var(--ink);background:#fff}
+.btn-accent{background:var(--accent);color:#06231a}
+.btn-accent:hover{background:var(--accent-bright)}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ═══ NAV (partagée) ═══ */
+header.nav{position:sticky;top:0;z-index:100;background:rgba(250,250,247,.85);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+.logo{font-family:'Space Grotesk';font-weight:700;font-size:21px;letter-spacing:.02em;color:var(--ink);cursor:pointer}
+.logo span{color:var(--accent)}
+.logo .by{font-family:'IBM Plex Mono';font-size:10px;color:var(--muted);letter-spacing:.1em;margin-left:8px;font-weight:400}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:14.5px;color:var(--muted);font-weight:500;transition:color .2s;cursor:pointer}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:flex;gap:12px;align-items:center}
 
-  html { scroll-behavior: smooth; }
+/* ═══ Vues SPA ═══ */
+.view{display:none}
+.view.active{display:block;animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--white);
-    color: var(--navy);
-    overflow-x: hidden;
-  }
+/* ═══ HERO / sections génériques ═══ */
+.hero{position:relative;overflow:hidden;padding:90px 0 0}
+.hero-grid-bg{position:absolute;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:54px 54px;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 0%,transparent 70%);mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 0%,transparent 70%);opacity:.55}
+.hero-in{position:relative;z-index:2;text-align:center;max-width:880px;margin:0 auto}
+.hero h1{font-size:clamp(38px,6vw,64px);font-weight:700;margin:22px 0 0;color:var(--ink)}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p.sub{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:660px;margin:24px auto 0;line-height:1.55}
+.hero-cta{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.hero-cta .btn{padding:14px 26px;font-size:15px}
+.trust-line{margin-top:26px;font-size:13px;color:var(--muted);font-family:'IBM Plex Mono';letter-spacing:.04em}
+.sec{padding:100px 0}
+.sec-head{max-width:680px;margin:0 auto 54px;text-align:center}
+.sec-head h2{font-size:clamp(28px,4vw,42px);color:var(--ink);margin-top:14px}
+.sec-head p{color:var(--muted);font-size:17px;margin-top:18px}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.2rem 4rem;
-    background: rgba(10, 22, 40, 0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-  }
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: 1.6rem;
-    color: var(--white); letter-spacing: 0.08em;
-  }
-  .nav-logo span { color: var(--gold); }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a {
-    color: rgba(250,250,248,0.7); text-decoration: none;
-    font-size: 0.88rem; font-weight: 400; letter-spacing: 0.04em;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--gold); }
-  .nav-cta {
-    background: var(--gold); color: var(--dark);
-    padding: 0.65rem 1.6rem; border-radius: 4px;
-    font-weight: 600; font-size: 0.88rem; text-decoration: none;
-    letter-spacing: 0.03em; transition: background 0.2s, transform 0.2s;
-  }
-  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+/* Cards génériques */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cards.cols-3{grid-template-columns:repeat(3,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;transition:.25s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -20px rgba(8,38,40,.25);border-color:#cdd4cf}
+.card .c-ic{width:44px;height:44px;border-radius:11px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px}
+.card h4{font-size:17px;color:var(--ink)}
+.card .c-sub{font-size:13.5px;color:var(--muted);margin-top:7px;flex:1}
+.card .status{margin-top:16px;font-family:'IBM Plex Mono';font-size:11px;display:inline-flex;align-items:center;gap:7px;letter-spacing:.04em}
+.card .status .sd{width:7px;height:7px;border-radius:50%}
+.status.live{color:#3d7a2e}.status.live .sd{background:var(--accent)}
+.status.dev{color:var(--amber)}.status.dev .sd{background:var(--amber)}
 
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    background: var(--dark);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    padding: 8rem 4rem 4rem;
-    position: relative;
-    overflow: hidden;
-  }
+/* FOOTER (partagé) */
+footer{background:#061c1d;color:#9fb5b2;padding:60px 0 38px}
+.foot-top{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid var(--line-dark)}
+.foot-brand .logo{color:#fff;font-size:22px}
+.foot-brand p{font-size:14px;margin-top:16px;max-width:330px;line-height:1.6}
+.foot-col h5{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6e8582;margin-bottom:16px}
+.foot-col a{display:block;font-size:14px;color:#bcd0cd;padding:6px 0;transition:color .2s;cursor:pointer}
+.foot-col a:hover{color:#fff}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:26px;flex-wrap:wrap;gap:14px;font-size:12.5px;color:#6e8582;font-family:'IBM Plex Mono'}
 
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 60% 60% at 70% 50%, rgba(26,58,107,0.6) 0%, transparent 70%),
-      radial-gradient(ellipse 30% 40% at 80% 80%, rgba(201,168,76,0.12) 0%, transparent 60%);
-  }
-
-  .hero-grid-bg {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-
-  .hero-content { position: relative; z-index: 2; }
-
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold); padding: 0.4rem 1rem; border-radius: 100px;
-    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em;
-    text-transform: uppercase; margin-bottom: 2rem;
-    animation: fadeUp 0.6s ease both;
-  }
-  .hero-badge::before {
-    content: ''; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--gold); animation: pulse 2s infinite;
-  }
-
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.8rem, 4.5vw, 4.2rem);
-    font-weight: 800; line-height: 1.1;
-    color: var(--white); margin-bottom: 1.5rem;
-    animation: fadeUp 0.6s 0.1s ease both;
-  }
-  .hero h1 .accent { color: var(--gold); }
-
-  .hero p {
-    font-size: 1.1rem; line-height: 1.7;
-    color: rgba(250,250,248,0.65);
-    max-width: 480px; margin-bottom: 0; /* reduced to remove gap with next line */
-    font-weight: 300;
-    animation: fadeUp 0.6s 0.2s ease both;
-  }
-  .hero-sub {
-    font-size: 1.05rem; line-height: 1.7;
-    color: rgba(250,250,248,0.65);
-    max-width: 480px; margin-top: 0; margin-bottom: 2rem;
-    font-weight: 300;
-    animation: fadeUp 0.6s 0.25s ease both;
-  }
-
-  .hero-actions {
-    display: flex; gap: 1rem; flex-wrap: wrap;
-    animation: fadeUp 0.6s 0.3s ease both;
-  }
-
-  .btn-primary {
-    background: var(--gold); color: var(--dark);
-    padding: 0.9rem 2rem; border-radius: 4px;
-    font-weight: 600; font-size: 0.95rem; text-decoration: none;
-    transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
-  }
-  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
-
-  .btn-secondary {
-    background: transparent; color: var(--white);
-    padding: 0.9rem 2rem; border-radius: 4px;
-    font-weight: 500; font-size: 0.95rem; text-decoration: none;
-    border: 1px solid rgba(250,250,248,0.25);
-    transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
-  }
-  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
-
-  /* Hero right — dashboard mockup */
-  .hero-visual {
-    position: relative; z-index: 2;
-    display: flex; justify-content: center; align-items: center;
-    animation: fadeLeft 0.8s 0.2s ease both;
-  }
-
-  .dashboard-mockup {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 16px;
-    padding: 1.5rem;
-    width: 100%; max-width: 480px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 32px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
-  }
-
-  .dash-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1.2rem;
-  }
-  .dash-title {
-    font-family: 'Syne', sans-serif; font-weight: 700;
-    color: var(--white); font-size: 0.9rem; letter-spacing: 0.05em;
-  }
-  .dash-dots { display: flex; gap: 5px; }
-  .dash-dots span {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-  }
-  .dash-dots span:first-child { background: #ff6b6b; }
-  .dash-dots span:nth-child(2) { background: #ffd93d; }
-  .dash-dots span:nth-child(3) { background: #6bcb77; }
-
-  .dash-stats {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.8rem; margin-bottom: 1.2rem;
-  }
-  .stat-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px; padding: 0.9rem;
-  }
-  .stat-label { font-size: 0.68rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-  .stat-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--white); }
-  .stat-change { font-size: 0.68rem; color: #6bcb77; margin-top: 0.2rem; }
-
-  .dash-chart {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px; padding: 1rem; margin-bottom: 1rem;
-  }
-  .chart-label { font-size: 0.72rem; color: var(--grey); margin-bottom: 0.8rem; }
-  .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 60px; }
-  .bar {
-    flex: 1; border-radius: 3px 3px 0 0;
-    background: rgba(201,168,76,0.2);
-    transition: all 0.3s;
-    animation: growUp 1s ease both;
-  }
-  .bar.active { background: var(--gold); }
-  .bar:nth-child(1) { height: 40%; animation-delay: 0.1s; }
-  .bar:nth-child(2) { height: 65%; animation-delay: 0.15s; }
-  .bar:nth-child(3) { height: 45%; animation-delay: 0.2s; }
-  .bar:nth-child(4) { height: 80%; animation-delay: 0.25s; }
-  .bar:nth-child(5) { height: 55%; animation-delay: 0.3s; }
-  .bar:nth-child(6) { height: 90%; animation-delay: 0.35s; animation-delay: 0.35s; }
-  .bar:nth-child(7) { height: 70%; animation-delay: 0.4s; }
-  .bar.active:nth-child(6) { background: var(--gold); }
-
-  .dash-modules { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .module-tag {
-    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
-    color: var(--gold-light); padding: 0.3rem 0.7rem; border-radius: 100px;
-    font-size: 0.7rem; font-weight: 500;
-  }
-
-  /* Hero stats row */
-  .hero-stats {
-    display: flex; gap: 3rem; margin-top: 3rem;
-    padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08);
-    animation: fadeUp 0.6s 0.4s ease both;
-  }
-  .hero-stat-num {
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem;
-    color: var(--gold);
-  }
-  .hero-stat-label { font-size: 0.8rem; color: rgba(250,250,248,0.5); margin-top: 0.2rem; }
-
-  /* ── LOGOS ── */
-  .logos-bar {
-    background: var(--navy);
-    padding: 2rem 4rem;
-    display: flex; align-items: center; justify-content: center;
-    gap: 0.5rem;
-    border-top: 1px solid rgba(201,168,76,0.1);
-    border-bottom: 1px solid rgba(201,168,76,0.1);
-  }
-  .logos-label {
-    font-size: 0.78rem; color: rgba(250,250,248,0.35);
-    text-transform: uppercase; letter-spacing: 0.1em; margin-right: 2rem;
-    white-space: nowrap;
-  }
-  .logos-list { display: flex; gap: 2.5rem; align-items: center; flex-wrap: wrap; justify-content: center; }
-  .logo-item {
-    font-family: 'Syne', sans-serif; font-weight: 700;
-    font-size: 0.85rem; letter-spacing: 0.1em;
-    color: rgba(250,250,248,0.3);
-    text-transform: uppercase;
-  }
-
-  /* ── SOLUTIONS ── */
-  section { padding: 6rem 4rem; }
-
-  .section-badge {
-    display: inline-block;
-    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--gold);
-    margin-bottom: 1rem;
-  }
-
-  h2 {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: clamp(2rem, 3vw, 2.8rem);
-    line-height: 1.15; margin-bottom: 1.2rem;
-  }
-
-  .section-intro {
-    font-size: 1.05rem; color: var(--grey);
-    max-width: 560px; line-height: 1.7; font-weight: 300;
-  }
-
-  .solutions {
-    background: linear-gradient(180deg, rgba(250,250,248,0.9), rgba(245,245,242,0.98));
-    padding: 6rem 4rem;
-    /* keep original context but visually distinct */
-  }
-
-  /* Enhanced styling for the Solutions cards only */
-  .solutions .solutions-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.6rem;
-    align-items: start;
-  }
-
-  .solutions .solution-card {
-    background: linear-gradient(180deg, #ffffff, #fcfcfb);
-    border: 1px solid rgba(15,34,64,0.06);
-    border-radius: 14px;
-    padding: 1.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    min-height: 320px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-    box-shadow: 0 10px 30px rgba(15,34,64,0.04);
-  }
-  .solutions .solution-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 22px 48px rgba(15,34,64,0.10);
-    border-color: rgba(201,168,76,0.18);
-  }
-
-  .solutions .solution-icon {
-    width: 56px; height: 56px; border-radius: 12px;
-    background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.06));
-    display: flex; align-items: center; justify-content: center; margin-bottom: 0.6rem;
-    font-size: 1.25rem; color: var(--gold);
-  }
-
-  .solutions .solution-card h3 {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: 1.05rem; margin-bottom: 0.25rem; color: var(--navy);
-  }
-
-  .solutions .solution-card p {
-    color: var(--navy-mid); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.4rem;
-  }
-
-  .solutions .solution-card ul {
-    margin: 0; padding: 0; list-style: none; color: var(--navy);
-    margin-bottom: 0.6rem;
-  }
-
-  .solutions .solution-card ul li {
-    position: relative; padding-left: 1.2rem; margin-bottom: 0.45rem;
-    font-size: 0.92rem; color: var(--navy-mid);
-  }
-  .solutions .solution-card ul li::before {
-    content: '\2022'; /* bullet */
-    position: absolute; left: 0; top: 0; color: var(--gold); font-weight: 800; font-size: 1.1rem; line-height: 1;
-  }
-
-  .solutions .solution-tag {
-    margin-top: auto; align-self: flex-start;
-    background: rgba(15,34,64,0.03); color: var(--navy-mid);
-    padding: 0.28rem 0.6rem; border-radius: 999px; font-size: 0.72rem; border: 1px solid rgba(15,34,64,0.04);
-  }
-
-  /* Responsive: stack to two columns then one */
-  @media (max-width: 1100px) {
-    .solutions .solutions-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 700px) {
-    .solutions { padding: 3rem 1.5rem; }
-    .solutions .solutions-grid { grid-template-columns: 1fr; }
-    .solutions .solution-card { min-height: auto; }
-  }
-
-  /* ── WHY ── */
-  .why { background: var(--dark); color: var(--white); }
-  .why h2 { color: var(--white); }
-  .why .section-intro { color: rgba(250,250,248,0.55); }
-
-  .why-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 4rem; align-items: center; margin-top: 4rem;
-  }
-
-  .why-features { display: flex; flex-direction: column; gap: 1.5rem; }
-
-  .why-feature {
-    display: flex; gap: 1.2rem; align-items: flex-start;
-    padding: 1.4rem; border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.06);
-    background: rgba(255,255,255,0.03);
-    transition: all 0.3s;
-  }
-  .why-feature:hover { border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.05); }
-
-  .why-icon {
-    width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
-    background: rgba(201,168,76,0.15); display: flex;
-    align-items: center; justify-content: center; font-size: 1.2rem;
-  }
-  .why-feature h4 {
-    font-family: 'Syne', sans-serif; font-weight: 700;
-    color: var(--white); font-size: 0.95rem; margin-bottom: 0.3rem;
-  }
-  .why-feature p { font-size: 0.85rem; color: rgba(250,250,248,0.5); line-height: 1.6; }
-
-  .why-visual {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 16px; padding: 2rem;
-  }
-
-  .metric-row { display: flex; flex-direction: column; gap: 1.2rem; }
-  .metric {
-    display: flex; align-items: center; justify-content: space-between;
-    padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .metric:last-child { border-bottom: none; padding-bottom: 0; }
-  .metric-name { font-size: 0.85rem; color: rgba(250,250,248,0.6); }
-  .metric-bar-wrap { flex: 1; margin: 0 1rem; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
-  .metric-bar { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 3px; animation: growRight 1.5s ease both; }
-  .metric-pct { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--gold); }
-
-  /* ── SECTORS ── */
-  .sectors { background: var(--grey-light); }
-
-  .sectors-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 1.2rem; margin-top: 3rem;
-  }
-
-  .sector-card {
-    background: var(--white); border-radius: 12px;
-    padding: 1.8rem 1.5rem; text-align: center;
-    border: 1px solid rgba(15,34,64,0.08);
-    transition: all 0.3s;
-  }
-  .sector-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(15,34,64,0.1); border-color: var(--gold); }
-  .sector-icon { font-size: 2rem; margin-bottom: 0.8rem; }
-  .sector-card h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.4rem; }
-  .sector-card p { font-size: 0.8rem; color: var(--grey); line-height: 1.5; }
-
-  /* ── TESTIMONIALS ── */
-  .testimonials { background: var(--white); }
-
-  .testi-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
-
-  .testi-card {
-    background: var(--grey-light);
-    border-radius: 12px; padding: 1.8rem;
-    border: 1px solid transparent;
-    transition: all 0.3s;
-  }
-  .testi-card:hover { border-color: var(--gold); background: var(--white); box-shadow: 0 8px 24px rgba(15,34,64,0.08); }
-
-  .testi-stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 2px; }
-  .testi-text { font-size: 0.9rem; line-height: 1.7; color: var(--navy); font-style: italic; margin-bottom: 1.2rem; }
-  .testi-author { display: flex; align-items: center; gap: 0.8rem; }
-  .testi-avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--navy-mid); display: flex; align-items: center;
-    justify-content: center; color: var(--gold); font-weight: 700; font-size: 0.85rem;
-  }
-  .testi-name { font-weight: 600; font-size: 0.85rem; color: var(--navy); }
-  .testi-role { font-size: 0.75rem; color: var(--grey); }
-
-  /* ── CTA ── */
-  .cta-section {
-    background: var(--navy);
-    text-align: center; padding: 6rem 4rem;
-    position: relative; overflow: hidden;
-  }
-  .cta-section::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(201,168,76,0.1) 0%, transparent 70%);
-  }
-  .cta-section h2 { color: var(--white); position: relative; z-index: 2; }
-  .cta-section p { color: rgba(250,250,248,0.6); max-width: 500px; margin: 1rem auto 2.5rem; font-size: 1.05rem; position: relative; z-index: 2; }
-  .cta-actions { display: flex; gap: 1rem; justify-content: center; position: relative; z-index: 2; }
-
-  /* ── DEMO MODAL ── */
-  .demo-modal {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(10, 22, 40, 0.8);
-    backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  .demo-modal.active {
-    opacity: 1; pointer-events: all;
-  }
-  .modal-content {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 2.5rem;
-    width: 100%; max-width: 520px;
-    position: relative;
-    transform: translateY(20px);
-    transition: transform 0.3s ease;
-  }
-  .demo-modal.active .modal-content {
-    transform: translateY(0);
-  }
-  .modal-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: none; border: none; font-size: 1.5rem;
-    color: var(--grey); cursor: pointer;
-  }
-  .modal-content h3 {
-    font-family: 'Syne', sans-serif; font-weight: 700;
-    font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--navy);
-  }
-  .modal-content p {
-    font-size: 0.95rem; color: var(--grey); line-height: 1.6;
-    margin-bottom: 2rem;
-  }
-  .form-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  .form-group {
-    display: flex; flex-direction: column;
-  }
-  .form-group.full-width {
-    grid-column: 1 / -1;
-  }
-  .form-group label {
-    font-size: 0.8rem; font-weight: 500; color: var(--navy-mid);
-    margin-bottom: 0.4rem;
-  }
-  .form-group input, .form-group textarea {
-    background: var(--grey-light);
-    border: 1px solid rgba(15,34,64,0.15);
-    border-radius: 6px; padding: 0.7rem 0.9rem;
-    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
-    color: var(--navy);
-  }
-  .form-group textarea {
-    min-height: 100px; resize: vertical;
-  }
-  .form-submit {
-    grid-column: 1 / -1;
-    background: var(--gold); color: var(--dark);
-    padding: 0.9rem 2rem; border-radius: 6px;
-    font-weight: 600; font-size: 0.95rem; text-decoration: none;
-    border: none; cursor: pointer; width: 100%; margin-top: 1rem;
-    transition: all 0.2s;
-  }
-  .form-submit:hover { background: var(--gold-light); }
-
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--dark);
-    padding: 4rem 4rem 2rem;
-    border-top: 1px solid rgba(201,168,76,0.1);
-  }
-  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
-  .footer-brand {
-  }
-  .footer-logo {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: 1.4rem; color: var(--white); letter-spacing: 0.08em; margin-bottom: 1rem;
-  }
-  .footer-logo span { color: var(--gold); }
-  .footer-desc { font-size: 0.85rem; color: rgba(250,250,248,0.4); line-height: 1.7; max-width: 260px; }
-  .footer-col h5 {
-    font-family: 'Syne', sans-serif; font-weight: 700;
-    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 1.2rem;
-  }
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
-  .footer-col a { font-size: 0.85rem; color: rgba(250,250,248,0.45); text-decoration: none; transition: color 0.2s; }
-  .footer-col a:hover { color: var(--white); }
-  .footer-bottom {
-    display: flex; align-items: center; justify-content: space-between;
-    padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.06);
-    font-size: 0.78rem; color: rgba(250,250,248,0.25);
-  }
-  .footer-bottom a { color: var(--gold); text-decoration: none; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeLeft {
-    from { opacity: 0; transform: translateX(30px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  @keyframes growUp {
-    from { transform: scaleY(0); transform-origin: bottom; }
-    to { transform: scaleY(1); transform-origin: bottom; }
-  }
-  @keyframes growRight {
-    from { width: 0; }
-    to { width: var(--w); }
-  }
-
-  /* scroll reveal */
-  .reveal {
-    opacity: 0; transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  @media (max-width: 900px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { display: none; }
-    .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; }
-    .hero-visual { display: none; }
-    section { padding: 4rem 1.5rem; }
-    .solutions-header { grid-template-columns: 1fr; }
-    .solutions-grid { grid-template-columns: 1fr 1fr; }
-    .why-grid { grid-template-columns: 1fr; }
-    .sectors-grid { grid-template-columns: 1fr 1fr; }
-    .testi-grid { grid-template-columns: 1fr; }
-    .footer-grid { grid-template-columns: 1fr 1fr; }
-    .logos-bar { padding: 1.5rem; }
-  }
+@media (max-width:980px){.cards,.cards.cols-3{grid-template-columns:repeat(2,1fr)}.foot-top{grid-template-columns:1fr}}
+@media (max-width:680px){.nav-links{display:none}.cards{grid-template-columns:1fr}.nav-cta .mono{display:none}}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{width:100%;background:none;border:none;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 4px;cursor:pointer;font-family:'Space Grotesk';font-size:16px;font-weight:600;color:var(--ink);text-align:left}
+.faq-ic{font-size:22px;color:var(--accent);flex-shrink:0;transition:transform .25s;font-weight:400}
+.faq-item.open .faq-ic{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-a p{font-size:14.5px;color:var(--muted);line-height:1.6;padding:0 4px 20px}
+.faq-item.open .faq-a{max-height:260px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">INTE<span>GA</span></div>
-  <ul class="nav-links">
-    <li><a href="#solutions">Solutions</a></li>
-    <li><a href="#why">Pourquoi INTEGA</a></li>
-    <li><a href="#sectors">Secteurs</a></li>
-    <li><a href="#temoignages">Témoignages</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <a href="#demo" class="nav-cta demo-trigger">Demander une démo →</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-grid-bg"></div>
-  <div class="hero-content">
-    <div class="hero-badge">Plateforme B2G · Afrique Francophone</div>
-    <h1>L'intelligence <span class="accent">au cœur</span> de vos administrations.</h1>
-    <p>INTEGA est la suite logicielle de référence pour la digitalisation des structures étatiques et paraétatiques.</p>
-    <p class="hero-sub">RH, GED, ERP, CRM, guichet unique et paiements digitaux — en une seule plateforme intégrée.</p>
-    <div class="hero-actions">
-      <a href="#demo" class="btn-primary demo-trigger">Demander une démo →</a>
-      <a href="#solutions" class="btn-secondary">Découvrir les modules</a>
-    </div>
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-num">6+</div>
-        <div class="hero-stat-label">Modules intégrés</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">100%</div>
-        <div class="hero-stat-label">Cloud & On-premise</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">24/7</div>
-        <div class="hero-stat-label">Support dédié</div>
-      </div>
-    </div>
+<!-- ════════ NAV PARTAGÉE ════════ -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <div class="logo" onclick="goView('intega')" id="navLogo">INTE<span>GA</span></div>
+    <nav class="nav-links" id="navLinks"></nav>
+    <div class="nav-cta" id="navCta"></div>
   </div>
+</header>
 
-  <div class="hero-visual">
-    <div class="dashboard-mockup">
-      <div class="dash-header">
-        <div class="dash-dots"><span></span><span></span><span></span></div>
-        <div class="dash-title">INTEGA · Tableau de bord</div>
+<!-- ════════════════════════════════════════════════════ -->
+<!-- VUE 1 — SITE INTEGA -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="view active" id="view-intega">
+  <section class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="wrap hero-in">
+      <span class="eyebrow">Intega · Logiciels souverains pour l'Afrique</span>
+      <h1>L'intelligence au cœur de vos <em>administrations</em></h1>
+      <p class="sub">Intega conçoit des logiciels métiers pour les administrations, banques et entreprises d'Afrique francophone. Souverains, conformes, pensés pour le terrain.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" onclick="scrollToId('produits')">Découvrir nos modules ↓</a>
       </div>
-      <div class="dash-stats">
-        <div class="stat-card">
-          <div class="stat-label">Agents</div>
-          <div class="stat-value">2 847</div>
-          <div class="stat-change">↑ +12% ce mois</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Dossiers</div>
-          <div class="stat-value">18 540</div>
-          <div class="stat-change">↑ +8% ce mois</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Paiements</div>
-          <div class="stat-value">94.2%</div>
-          <div class="stat-change">↑ Taux collecte</div>
-        </div>
+      <p class="trust-line">OHADA · BCEAO · BEAC · COBAC · Hébergement souverain</p>
+    </div>
+  </section>
+
+  <section class="sec" id="produits">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Nos modules</span>
+        <h2>Choisissez votre module</h2>
+        <p>Cliquez sur un module pour découvrir sa page dédiée.</p>
       </div>
-      <div class="dash-chart">
-        <div class="chart-label">Transactions digitales — 7 derniers jours</div>
-        <div class="chart-bars">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar active"></div>
-          <div class="bar"></div>
-        </div>
-      </div>
-      <div class="dash-modules">
-        <span class="module-tag">✓ INTEGA RH</span>
-        <span class="module-tag">✓ INTEGA PAY</span>
-        <span class="module-tag">✓ INTEGA ERP</span>
-        <span class="module-tag">✓ INTEGA GATE</span>
+      <div class="cards cols-3">
+        <a class="card reveal" onclick="goView('ceara')" style="cursor:pointer">
+          <div class="c-ic">💬</div><h4>CEARA</h4><p class="c-sub">Intelligence de l'expérience client : collecte multicanal, analyse de sentiment IA et tableaux de bord décisionnels.</p>
+          <span class="status live"><span class="sd"></span>Découvrir →</span>
+        </a>
+        <a class="card reveal" onclick="moduleSoon('GED')" style="cursor:pointer"><div class="c-ic">🗂️</div><h4>GED</h4><p class="c-sub">Gestion électronique documentaire : dématérialisation, workflow et archivage légal.</p><span class="status dev"><span class="sd"></span>Bientôt →</span></a>
+        <a class="card reveal" onclick="moduleSoon('RH+')" style="cursor:pointer"><div class="c-ic">👥</div><h4>RH+</h4><p class="c-sub">Ressources humaines : paie, congés, carrières, conforme au droit du travail local.</p><span class="status dev"><span class="sd"></span>Bientôt →</span></a>
+        <a class="card reveal" onclick="moduleSoon('STOCK')" style="cursor:pointer"><div class="c-ic">📦</div><h4>STOCK</h4><p class="c-sub">Stocks et approvisionnements multi-entrepôts, traçabilité complète.</p><span class="status dev"><span class="sd"></span>Bientôt →</span></a>
+        <a class="card reveal" onclick="moduleSoon('KEBA')" style="cursor:pointer"><div class="c-ic">🛡️</div><h4>KEBA</h4><p class="c-sub">Communication souveraine et sécurisée pour les institutions sensibles.</p><span class="status dev"><span class="sd"></span>Bientôt →</span></a>
+        <a class="card reveal" onclick="moduleSoon('EZALI')" style="cursor:pointer"><div class="c-ic">📍</div><h4>EZALI</h4><p class="c-sub">Localisateur de services de proximité : stations-service, pharmacies de garde, GAB de banques et points de service essentiels.</p><span class="status dev"><span class="sd"></span>Bientôt →</span></a>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- LOGOS -->
-<div class="logos-bar">
-  <span class="logos-label">Ils nous font confiance</span>
-  <div class="logos-list">
-    <span class="logo-item">Ministère des Finances</span>
-    <span class="logo-item">·</span>
-    <span class="logo-item">Mairie Centrale</span>
-    <span class="logo-item">·</span>
-    <span class="logo-item">Trésor Public</span>
-    <span class="logo-item">·</span>
-    <span class="logo-item">CNSS</span>
-    <span class="logo-item">·</span>
-    <span class="logo-item">Direction Générale des Impôts</span>
+  <!-- POURQUOI INTEGA EXISTE -->
+  <section class="sec" style="background:var(--ink);color:#fff">
+    <div class="wrap">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center">
+        <div>
+          <span class="eyebrow" style="color:var(--accent-bright)">Pourquoi Intega existe</span>
+          <h2 style="color:#fff;margin-top:14px;font-size:clamp(26px,3.6vw,38px)">Le logiciel africain ne devrait pas être une copie importée</h2>
+          <p style="color:#bcd0cd;font-size:16px;margin-top:18px;line-height:1.65">Trop de solutions déployées en Afrique sont pensées ailleurs, pour d'autres réalités : connexion permanente, une seule langue, mépris des cadres réglementaires locaux. Résultat : des outils qui échouent sur le terrain.</p>
+          <p style="color:#bcd0cd;font-size:16px;margin-top:14px;line-height:1.65">Intega existe pour combler ce vide : des logiciels <b style="color:#fff">conçus en Afrique, pour l'Afrique</b>, qui assument la faible connectivité, le multilinguisme réel, la conformité OHADA et la souveraineté des données.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="background:rgba(124,179,66,.1);border:1px solid var(--line-dark);border-radius:14px;padding:20px"><div style="font-family:'Space Grotesk';font-size:28px;font-weight:700;color:var(--accent-bright)">100%</div><div style="font-size:13.5px;color:#bcd0cd;margin-top:4px">Conçu pour les cadres OHADA, CEMAC et UEMOA</div></div>
+          <div style="background:rgba(124,179,66,.1);border:1px solid var(--line-dark);border-radius:14px;padding:20px"><div style="font-family:'Space Grotesk';font-size:28px;font-weight:700;color:var(--accent-bright)">Souverain</div><div style="font-size:13.5px;color:#bcd0cd;margin-top:4px">Données hébergées localement, sous votre contrôle</div></div>
+          <div style="background:rgba(124,179,66,.1);border:1px solid var(--line-dark);border-radius:14px;padding:20px"><div style="font-family:'Space Grotesk';font-size:28px;font-weight:700;color:var(--accent-bright)">Terrain</div><div style="font-size:13.5px;color:#bcd0cd;margin-top:4px">Pensé pour la réalité, pas pour la démo</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POUR QUI + POURQUOI LES DIRIGEANTS CHOISISSENT -->
+  <section class="sec" id="pour-qui">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow">Pour qui</span><h2>Conçu pour ceux qui dirigent</h2><p>Administrations, institutions financières et entreprises de service qui veulent piloter sur des faits, pas des intuitions.</p></div>
+      <div class="cards">
+        <div class="card reveal"><div class="c-ic">🏛️</div><h4>Administrations</h4><p class="c-sub">Ministères, agences et collectivités qui modernisent le service public et rendent des comptes aux citoyens.</p></div>
+        <div class="card reveal"><div class="c-ic">🏦</div><h4>Banques & microfinance</h4><p class="c-sub">Réseaux d'agences soumis à la pression réglementaire BCEAO / BEAC / COBAC et à l'exigence de qualité.</p></div>
+        <div class="card reveal"><div class="c-ic">🏢</div><h4>Entreprises de service</h4><p class="c-sub">Stations, hôtels, assurances, distributeurs — toute structure dont la réputation dépend de l'expérience client.</p></div>
+        <div class="card reveal"><div class="c-ic">🤝</div><h4>Dirigeants & DG</h4><p class="c-sub">Décideurs qui veulent une vision claire et traçable de ce qui se passe sur le terrain, en temps réel.</p></div>
+      </div>
+      <div style="background:var(--paper-2);border-radius:var(--radius);padding:34px;margin-top:30px">
+        <div style="text-align:center;max-width:620px;margin:0 auto 26px"><span class="eyebrow">Pourquoi les dirigeants choisissent Intega</span></div>
+        <div class="cards cols-3" style="gap:14px">
+          <div class="card reveal" style="border:none;box-shadow:none;background:#fff"><h4 style="font-size:15px">⚡ Déployé, pas promis</h4><p class="c-sub">Mise en production rapide. Pas de chantier informatique sans fin.</p></div>
+          <div class="card reveal" style="border:none;box-shadow:none;background:#fff"><h4 style="font-size:15px">🎯 Traçabilité totale</h4><p class="c-sub">Chaque dysfonctionnement rattaché à un responsable, suivi jusqu'à résolution.</p></div>
+          <div class="card reveal" style="border:none;box-shadow:none;background:#fff"><h4 style="font-size:15px">🛡️ Conforme & souverain</h4><p class="c-sub">Vos données restent les vôtres, dans le respect des cadres locaux.</p></div>
+          <div class="card reveal" style="border:none;box-shadow:none;background:#fff"><h4 style="font-size:15px">📶 Marche partout</h4><p class="c-sub">Faible connexion, multilingue, mobile d'entrée de gamme.</p></div>
+          <div class="card reveal" style="border:none;box-shadow:none;background:#fff"><h4 style="font-size:15px">💬 Support local</h4><p class="c-sub">Une équipe qui parle votre langue et connaît votre contexte.</p></div>
+          <div class="card reveal" style="border:none;box-shadow:none;background:#fff"><h4 style="font-size:15px">📈 Décisions sur faits</h4><p class="c-sub">Des tableaux de bord qui transforment le terrain en décisions.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTRE MÉTHODE -->
+  <section class="sec" style="background:var(--ink);color:#fff" id="methode-intega">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow" style="color:var(--accent-bright)">Notre méthode</span><h2 style="color:#fff">Du besoin métier au logiciel déployé</h2><p style="color:#bcd0cd">Une approche en trois temps, éprouvée sur le terrain.</p></div>
+      <div class="cards cols-3" style="gap:30px">
+        <div class="card reveal" style="background:transparent;border-color:var(--line-dark);color:#fff"><div class="c-ic" style="background:rgba(124,179,66,.16)">①</div><h4 style="color:#fff">Comprendre</h4><p class="c-sub" style="color:var(--muted-on-ink)">Immersion terrain, analyse des contraintes réglementaires et des usages réels avant d'écrire une ligne de code.</p></div>
+        <div class="card reveal" style="background:transparent;border-color:var(--line-dark);color:#fff"><div class="c-ic" style="background:rgba(124,179,66,.16)">②</div><h4 style="color:#fff">Concevoir</h4><p class="c-sub" style="color:var(--muted-on-ink)">Logiciels adaptés aux réalités locales : faible connexion, multilingue, mobile-first, conformes OHADA.</p></div>
+        <div class="card reveal" style="background:transparent;border-color:var(--line-dark);color:#fff"><div class="c-ic" style="background:rgba(124,179,66,.16)">③</div><h4 style="color:#fff">Déployer</h4><p class="c-sub" style="color:var(--muted-on-ink)">Mise en production rapide, formation des équipes, support continu et amélioration dans la durée.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAS D'USAGE -->
+  <section class="sec" id="cas-usage">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow">Cas d'usage</span><h2>Intega sur le terrain</h2><p>Des exemples concrets de ce que nos modules permettent aujourd'hui.</p></div>
+      <div class="cards cols-3">
+        <a class="card reveal" onclick="goView('ceara')" style="cursor:pointer"><div class="c-ic">🏦</div><h4>Banque — écoute des agences</h4><p class="c-sub">Une banque mesure la satisfaction à chaque agence via QR et WhatsApp, détecte les points de friction et relance les clients mécontents.</p><span class="status live"><span class="sd"></span>Avec CEARA →</span></a>
+        <a class="card reveal" onclick="goView('ceara')" style="cursor:pointer"><div class="c-ic">⛽</div><h4>Stations — qualité de service</h4><p class="c-sub">Un réseau de stations suit la propreté et l'accueil par site, classe les points de service et agit sur les écarts.</p><span class="status live"><span class="sd"></span>Avec CEARA →</span></a>
+        <a class="card reveal" onclick="goView('ceara')" style="cursor:pointer"><div class="c-ic">🏛️</div><h4>Service public — voix du citoyen</h4><p class="c-sub">Une administration collecte l'avis des usagers, trace les doléances et produit des rapports pour ses bailleurs.</p><span class="status live"><span class="sd"></span>Avec CEARA →</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="sec" id="faq" style="background:var(--paper-2)">
+    <div class="wrap" style="max-width:780px">
+      <div class="sec-head"><span class="eyebrow">Questions fréquentes</span><h2>Vous vous demandez peut-être…</h2></div>
+      <div id="faqList">
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Faut-il une connexion internet permanente ?</span><span class="faq-ic">+</span></button><div class="faq-a"><p>Non. Nos modules sont conçus pour la faible connectivité : repli SMS/USSD, fonctionnement sur mobiles d'entrée de gamme, synchronisation différée quand le réseau revient.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Mes données sont-elles en sécurité et où sont-elles hébergées ?</span><span class="faq-ic">+</span></button><div class="faq-a"><p>Vos données sont chiffrées et hébergées localement, sous votre contrôle. Intega respecte les cadres de souveraineté numérique et ne revend jamais vos données.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Combien de temps pour déployer ?</span><span class="faq-ic">+</span></button><div class="faq-a"><p>CEARA se déploie en self-service en moins de 5 minutes avec un premier point de service gratuit. Les modules métier plus lourds suivent notre méthode en trois temps, avec une mise en production rapide.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Est-ce conforme à la réglementation de mon pays ?</span><span class="faq-ic">+</span></button><div class="faq-a"><p>Oui. Nos solutions sont pensées pour les cadres OHADA, et pour les zones CEMAC et UEMOA (BCEAO, BEAC, COBAC selon les secteurs).</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Les modules fonctionnent-ils en plusieurs langues ?</span><span class="faq-ic">+</span></button><div class="faq-a"><p>Oui. Nos outils gèrent le français et le code-switching réel avec les langues locales (lingala, kituba, wolof, fon…), aussi bien à la collecte qu'à l'analyse.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)"><span>Quel module commencer en premier ?</span><span class="faq-ic">+</span></button><div class="faq-a"><p>CEARA est disponible dès aujourd'hui et offre une valeur immédiate : commencez par mettre votre structure à l'écoute de ses clients, gratuitement sur un premier point de service.</p></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!-- VUE 2 — LANDING CEARA -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="view" id="view-ceara">
+  <section class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="wrap hero-in">
+      <span class="eyebrow">CEARA · Un module Intega</span>
+      <h1>Vos clients parlent.<br>Et si vous <em>les écoutiez</em> vraiment ?</h1>
+      <p class="sub">CEARA collecte, structure et transforme le retour de vos clients en décisions concrètes. Collecte multicanal, analyse de sentiment par IA, tableaux de bord en temps réel — pensé pour l'Afrique francophone.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" onclick="goView('onboarding')">Démarrer l'essai gratuit →</a>
+        <a class="btn btn-ghost" onclick="goView('dashboard')">Voir le tableau de bord</a>
+      </div>
+      <p class="trust-line">Déployé en 48h · WhatsApp · QR · SMS · Conforme BCEAO · BEAC · OHADA</p>
+    </div>
+    <div class="hero-mock reveal" style="position:relative;z-index:2;max-width:330px;margin:50px auto -80px;border-radius:28px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(8,38,40,.45),0 0 0 1px rgba(8,38,40,.06);background:#fff;border:8px solid var(--ink)">
+      <div style="background:var(--ink);color:#fff;padding:16px 18px 13px">
+        <div class="mono" style="font-size:10px;color:var(--accent-bright);letter-spacing:.1em">✓ QR SCANNÉ EN POINT DE SERVICE</div>
+        <h5 style="font-size:15px;margin-top:6px;color:#fff">Votre avis compte pour nous</h5>
+      </div>
+      <div style="padding:18px;background:var(--paper)">
+        <div style="font-family:'Space Grotesk';font-size:14px;color:var(--ink);margin-bottom:12px;font-weight:600">Recommanderiez-vous notre service ?</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px">
+          ${''}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="partners" style="background:var(--ink);color:#fff;padding:130px 0 54px">
+    <div class="wrap" style="text-align:center">
+      <div class="mono" style="font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted-on-ink)">Pensé pour les institutions et entreprises d'Afrique</div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px 40px;margin-top:28px">
+        <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:15px">Banques & IMF</div></div>
+        <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:15px">Services publics</div></div>
+        <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:15px">Stations-service</div></div>
+        <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:15px">Hôtellerie</div></div>
+        <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:15px">Retail</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" style="background:var(--ink);color:#fff;padding-top:0">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow" style="color:var(--accent-bright)">La méthode CEARA</span><h2 style="color:#fff">De la collecte à l'action, en 4 temps</h2><p style="color:#bcd0cd">Aucune appli à installer pour vos clients. Aucune intervention manuelle de votre côté.</p></div>
+      <div class="cards" style="gap:16px">
+        <div class="card reveal" style="background:transparent;border-color:var(--line-dark)"><div class="c-ic" style="background:rgba(124,179,66,.16)">1</div><h4 style="color:#fff">Collecter</h4><p class="c-sub" style="color:var(--muted-on-ink)">WhatsApp, QR, SMS. Réponse en 30 secondes, même sans smartphone.</p></div>
+        <div class="card reveal" style="background:transparent;border-color:var(--line-dark)"><div class="c-ic" style="background:rgba(124,179,66,.16)">2</div><h4 style="color:#fff">Structurer</h4><p class="c-sub" style="color:var(--muted-on-ink)">L'IA détecte le sentiment, comprend le français et les langues locales.</p></div>
+        <div class="card reveal" style="background:transparent;border-color:var(--line-dark)"><div class="c-ic" style="background:rgba(124,179,66,.16)">3</div><h4 style="color:#fff">Analyser</h4><p class="c-sub" style="color:var(--muted-on-ink)">NPS, CSAT par point de service en temps réel. Les anomalies alertent.</p></div>
+        <div class="card reveal" style="background:transparent;border-color:var(--line-dark)"><div class="c-ic" style="background:rgba(124,179,66,.16)">4</div><h4 style="color:#fff">Agir</h4><p class="c-sub" style="color:var(--muted-on-ink)">Relance des détracteurs, avis des promoteurs, rapport mensuel auto.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="canaux">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow">Collecte multicanal</span><h2>Là où vos clients sont déjà</h2></div>
+      <div class="cards">
+        <div class="card reveal"><div class="c-ic">💬</div><h4>WhatsApp</h4><p class="c-sub">Canal dominant en Afrique. Envoi automatique post-visite.</p></div>
+        <div class="card reveal"><div class="c-ic">📷</div><h4>QR Code</h4><p class="c-sub">Affiché en point de service. Le client scanne, sans appli.</p></div>
+        <div class="card reveal"><div class="c-ic">✉️</div><h4>SMS</h4><p class="c-sub">Pour les zones à faible connectivité.</p></div>
+        <div class="card reveal"><div class="c-ic">🌐</div><h4>Lien web</h4><p class="c-sub">À partager par email, réseaux ou site.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="tarifs" style="background:var(--paper-2)">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow">Tarification</span><h2>Un forfait pour chaque réseau</h2><p>Premier point de service gratuit. Essai 14 jours, sans carte bancaire.</p></div>
+      <div class="cards cols-3" id="pricingCards"></div>
+    </div>
+  </section>
+
+  <section class="sec" style="background:var(--ink);color:#fff;text-align:center">
+    <div class="wrap" style="max-width:760px">
+      <span class="eyebrow" style="color:var(--accent-bright)">Prêt à écouter</span>
+      <h2 style="color:#fff;margin-top:16px;font-size:clamp(28px,4.4vw,44px)">Mettez votre structure à <em style="font-style:normal;color:var(--accent-bright)">l'écoute de ses clients</em></h2>
+      <p style="color:#bcd0cd;font-size:17px;margin:22px 0 30px">Démarrez avec un point de service gratuit. QR généré en moins de 5 minutes.</p>
+      <div class="hero-cta" style="justify-content:center">
+        <a class="btn btn-accent" onclick="goView('onboarding')">Démarrer l'essai gratuit →</a>
+        <a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.25)" onclick="goView('dashboard')">Voir une démo du tableau de bord</a>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- ════════════════════════════════════════════════════ -->
+<!-- VUE 3 — ONBOARDING -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="view" id="view-onboarding">
+  <div class="onb">
+    <aside class="onb-aside">
+      <div class="onb-brand"><div class="logo" style="color:#fff">CE<span>ARA</span></div><div class="mono" style="font-size:10px;color:var(--muted-on-ink);margin-top:3px">by Intega</div></div>
+      <div class="onb-tag">Mettez votre structure à <b style="color:var(--accent-bright)">l'écoute de ses clients</b> en moins de 5 minutes. Collecte multicanal, analyse IA, conformité OHADA.</div>
+      <div class="onb-steps" id="onbSteps"></div>
+      <div class="mono" style="font-size:10.5px;color:var(--muted-on-ink);margin-top:auto">← <span style="cursor:pointer;text-decoration:underline" onclick="goView('ceara')">Retour à CEARA</span></div>
+    </aside>
+    <main class="onb-main"><div class="onb-card" id="onbCard"></div></main>
   </div>
 </div>
 
-<!-- SOLUTIONS -->
-<section class="solutions" id="solutions">
-  <div class="solutions-header reveal">
-    <div>
-      <span class="section-badge">Nos Modules</span>
-      <h2>Une suite complète pour chaque besoin de l'État</h2>
-    </div>
-    <p class="section-intro">6 modules interconnectés, conçus spécifiquement pour les réalités des administrations africaines. Déployables séparément ou en suite intégrée.</p>
-  </div>
-
-  <div class="solutions-grid">
-    <div class="solution-card reveal">
-      <div class="solution-icon">👥</div>
-      <h3>INTEGA RH+</h3>
-      <p>Gestion des ressources humaines<br>Suite RH complète pensée pour les administrations publiques : de la gestion des carrières à la paie des agents de l'État, avec prise en charge des grilles indiciaires et des statuts particuliers.</p>
-      <ul>
-        <li>Gestion des dossiers agents & carrières</li>
-        <li>Paye, primes, indemnités et retenues sociales</li>
-        <li>Congés, absences et gestion des présences</li>
-        <li>Organigrammes, affectations et mutations</li>
-        <li>Évaluations de performance et notation</li>
+<!-- ════════════════════════════════════════════════════ -->
+<!-- VUE 4 — DASHBOARD -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="view" id="view-dashboard">
+  <div class="dash">
+    <aside class="dside">
+      <div class="dside-logo">CE<span>ARA</span><span class="by">by Intega</span></div>
+      <div class="dside-org"><div class="lab">Client</div><div class="nm" id="dOrgName">SESUR</div><div class="pl" id="dOrgPlan">Service IMV · Plan Growth</div></div>
+      <ul class="dside-nav" id="dnav">
+        <li data-s="overview" class="active"><span class="ic">◈</span> Vue d'ensemble</li>
+        <li data-s="channels"><span class="ic">⬡</span> Canaux & guichets</li>
+        <li data-s="verbatims"><span class="ic">❝</span> Verbatims</li>
+        <li data-s="categories"><span class="ic">◷</span> Motifs</li>
+        <li data-s="grievances"><span class="ic">⚑</span> Doléances <span class="badge">1</span></li>
+        <li data-s="alerts"><span class="ic">⚠</span> Alertes <span class="badge">3</span></li>
+        <li data-s="reports"><span class="ic">▤</span> Rapports</li>
       </ul>
-      <span class="solution-tag">Ressources Humaines</span>
-    </div>
-    <div class="solution-card reveal">
-      <div class="solution-icon">📄</div>
-      <h3>INTEGA GED</h3>
-      <p>Gestion électronique des documents<br>Dématérialisez l'ensemble du cycle documentaire de votre administration : de la création à l'archivage légal, en passant par la validation, la signature électronique et le partage sécurisé.</p>
-      <ul>
-        <li>Capture, indexation et classement automatique</li>
-        <li>Workflows de validation et circuits de signature</li>
-        <li>Gestion du courrier entrant et sortant</li>
-        <li>Archivage légal et traçabilité complète</li>
-        <li>Recherche full-text et accès sécurisé par profil</li>
-      </ul>
-      <span class="solution-tag">GED</span>
-    </div>
-    <div class="solution-card reveal">
-      <div class="solution-icon">📦</div>
-      <h3>INTEGA STOCK</h3>
-      <p>Gestion des stocks et inventaires<br>Pilotez en temps réel les stocks de votre administration : équipements, matériels, fournitures et biens publics. Évitez les ruptures, éliminez les pertes, assurez la traçabilité de chaque mouvement.</p>
-      <ul>
-        <li>Inventaire en temps réel multi-dépôts</li>
-        <li>Entrées, sorties, transferts et ajustements</li>
-        <li>Gestion des appels d'offres et commandes</li>
-        <li>Alertes de seuil et réapprovisionnement auto</li>
-        <li>Rapports et audits de patrimoine public</li>
-      </ul>
-      <span class="solution-tag">Gestion des Stocks</span>
-    </div>
-    <div class="solution-card reveal">
-      <div class="solution-icon">🏦</div>
-      <h3>INTEGA COMPTA</h3>
-      <p>Comptabilité des administrations publiques<br>Solution de comptabilité publique conforme au plan comptable de l'État (SYSCOHADA révisé / UEMOA). Gestion budgétaire, exécution des dépenses et recettes, et reporting financier réglementaire en temps réel.</p>
-      <ul>
-        <li>Comptabilité générale et budgétaire</li>
-        <li>Exécution des dépenses et mandatement</li>
-        <li>Recouvrement des recettes et ordres de recette</li>
-        <li>Clôture d'exercice, bilans et comptes de gestion</li>
-        <li>Reporting financier réglementaire (TOFE, loi de finances)</li>
-      </ul>
-      <span class="solution-tag">Comptabilité Publique</span>
-    </div>
-    <div class="solution-card reveal">
-      <div class="solution-icon">🤝</div>
-      <h3>INTEGA CRM</h3>
-      <p>Gestion de la relation citoyen<br>Centralisez et améliorez chaque interaction entre votre administration et les citoyens. Du dépôt de demande à la délivrance du service, suivez chaque dossier en temps réel et mesurez la satisfaction des usagers.</p>
-      <ul>
-        <li>Portail citoyen multicanal (web, mobile, guichet)</li>
-        <li>Réception et suivi des demandes et réclamations</li>
-        <li>Attribution et gestion des dossiers par agent</li>
-        <li>Notifications SMS/email automatiques aux citoyens</li>
-        <li>Tableaux de bord satisfaction et délais de traitement</li>
-      </ul>
-      <span class="solution-tag">CRM Citoyen</span>
-    </div>
-    <div class="solution-card reveal">
-      <div class="solution-icon">🖥️</div>
-      <h3>INTEGA GATE</h3>
-      <p>Guichet unique digital<br>Plateforme de services publics digitaux intégrée : guichet unique d'accès aux démarches administratives, télédéclaration et télépaiement, délivrance d'autorisations, quittances et recouvrement en ligne.</p>
-      <ul>
-        <li>Télédéclaration de tous types d'impôts et taxes</li>
-        <li>Télépaiement multi-canal (Mobile Money, virement, espèces)</li>
-        <li>Émission automatique de quittances électroniques</li>
-        <li>Guichet unique multiservices : permis, licences, autorisations</li>
-        <li>Tableau de bord : suivi recouvrement en temps réel</li>
-      </ul>
-      <span class="solution-tag">Guichet Unique</span>
-    </div>
-  </div>
-</section>
-
-<!-- WHY -->
-<section class="why" id="why">
-  <span class="section-badge reveal">Pourquoi INTEGA</span>
-  <h2 class="reveal">Conçu pour l'Afrique,<br>prêt pour le monde.</h2>
-  <p class="section-intro reveal">Nous ne copions pas les solutions occidentales. Nous construisons des outils pensés pour les contraintes et les opportunités des administrations africaines.</p>
-
-  <div class="why-grid">
-    <div class="why-features">
-      <div class="why-feature reveal">
-        <div class="why-icon">🌍</div>
-        <div>
-          <h4>Ancrage local profond</h4>
-          <p>Nos solutions intègrent les cadres légaux, fiscaux et réglementaires spécifiques à chaque pays d'Afrique francophone.</p>
-        </div>
+      <div class="dside-foot"><span id="dDataMode">◐ Mode démo</span><br><span style="cursor:pointer;text-decoration:underline" onclick="goView('ceara')">← Retour CEARA</span></div>
+    </aside>
+    <div class="dmain">
+      <div class="dtop">
+        <div><h1 id="dttl">Vue d'ensemble</h1><div class="dsub" id="dtsub">Expérience des usagers · 30 derniers jours</div></div>
+        <div style="display:flex;gap:10px;align-items:center"><span class="pill" id="dLive">● Temps réel</span><button class="tb-btn" onclick="alert('Démo : export PDF')">Exporter</button></div>
       </div>
-      <div class="why-feature reveal">
-        <div class="why-icon">🔒</div>
-        <div>
-          <h4>Sécurité & Souveraineté des données</h4>
-          <p>Hébergement sur serveurs locaux ou cloud souverain. Vos données publiques restent sous votre contrôle.</p>
-        </div>
-      </div>
-      <div class="why-feature reveal">
-        <div class="why-icon">⚡</div>
-        <div>
-          <h4>Déploiement rapide</h4>
-          <p>Mise en production en 30 à 90 jours. Formation incluse pour vos équipes techniques et utilisateurs finaux.</p>
-        </div>
-      </div>
-      <div class="why-feature reveal">
-        <div class="why-icon">🔗</div>
-        <div>
-          <h4>Intégration totale</h4>
-          <p>Tous les modules INTEGA communiquent entre eux. Une donnée saisie une fois circule dans tout le système.</p>
-        </div>
-      </div>
+      <div class="dcontent" id="dcontent"></div>
     </div>
-
-    <div class="why-visual reveal">
-      <div style="color: rgba(250,250,248,0.5); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;">Impact mesuré sur le terrain</div>
-      <div class="metric-row">
-        <div class="metric">
-          <span class="metric-name">Réduction délais traitement</span>
-          <div class="metric-bar-wrap"><div class="metric-bar" style="width: 78%; --w: 78%;"></div></div>
-          <span class="metric-pct">–78%</span>
-        </div>
-        <div class="metric">
-          <span class="metric-name">Taux de collecte fiscale</span>
-          <div class="metric-bar-wrap"><div class="metric-bar" style="width: 65%; --w: 65%;"></div></div>
-          <span class="metric-pct">+65%</span>
-        </div>
-        <div class="metric">
-          <span class="metric-name">Satisfaction citoyens</span>
-          <div class="metric-bar-wrap"><div class="metric-bar" style="width: 82%; --w: 82%;"></div></div>
-          <span class="metric-pct">+82%</span>
-        </div>
-        <div class="metric">
-          <span class="metric-name">Réduction paperasse</span>
-          <div class="metric-bar-wrap"><div class="metric-bar" style="width: 90%; --w: 90%;"></div></div>
-          <span class="metric-pct">–90%</span>
-        </div>
-        <div class="metric">
-          <span class="metric-name">Productivité agents</span>
-          <div class="metric-bar-wrap"><div class="metric-bar" style="width: 55%; --w: 55%;"></div></div>
-          <span class="metric-pct">+55%</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SECTORS -->
-<section class="sectors" id="sectors">
-  <div class="reveal">
-    <span class="section-badge">Secteurs</span>
-    <h2>Toutes les structures publiques,<br>une seule plateforme.</h2>
-  </div>
-
-  <div class="sectors-grid">
-    <div class="sector-card reveal">
-      <div class="sector-icon">🏛️</div>
-      <h4>Ministères</h4>
-      <p>Pilotage budgétaire, gestion des agents, courrier officiel et reporting gouvernemental.</p>
-    </div>
-    <div class="sector-card reveal">
-      <div class="sector-icon">🏙️</div>
-      <h4>Collectivités locales</h4>
-      <p>Mairies, conseils départementaux, communes — services aux citoyens et fiscalité locale.</p>
-    </div>
-    <div class="sector-card reveal">
-      <div class="sector-icon">🏥</div>
-      <h4>Santé publique</h4>
-      <p>Hôpitaux publics, CHU, agences sanitaires — stocks médicaux, RH et facturation.</p>
-    </div>
-    <div class="sector-card reveal">
-      <div class="sector-icon">🎓</div>
-      <h4>Éducation nationale</h4>
-      <p>Universités, académies, directions régionales — gestion des personnels enseignants.</p>
-    </div>
-    <div class="sector-card reveal">
-      <div class="sector-icon">💰</div>
-      <h4>Trésor & Finances</h4>
-      <p>Trésor public, impôts, douanes — recouvrement, paiements et contrôle budgétaire.</p>
-    </div>
-    <div class="sector-card reveal">
-      <div class="sector-icon">🏭</div>
-      <h4>Entreprises paraétatiques</h4>
-      <p>Sociétés nationales, offices publics, établissements sous tutelle de l'État.</p>
-    </div>
-    <div class="sector-card reveal">
-      <div class="sector-icon">🚔</div>
-      <h4>Sécurité & Justice</h4>
-      <p>Police nationale, gendarmerie, tribunaux — gestion des personnels et des dossiers.</p>
-    </div>
-    <div class="sector-card reveal">
-      <div class="sector-icon">🌾</div>
-      <h4>Agriculture & Ressources</h4>
-      <p>Agences agricoles, offices fonciers — gestion des concessions et permis.</p>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="testimonials" id="temoignages">
-  <div class="reveal">
-    <span class="section-badge">Témoignages</span>
-    <h2>Ce que disent nos clients</h2>
-  </div>
-
-  <div class="testi-grid">
-    <div class="testi-card reveal">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"INTEGA RH a transformé la gestion de nos 3 200 agents. La paie est traitée en 2 jours au lieu de 3 semaines. Un gain de temps et de sérénité considérable pour nos équipes."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">DG</div>
-        <div>
-          <div class="testi-name">Dir. Général des Ressources Humaines</div>
-          <div class="testi-role">Ministère de la Fonction Publique</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card reveal">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"INTEGA PAY a augmenté notre taux de recouvrement de 40% en six mois. Les citoyens paient désormais leurs taxes depuis leur téléphone. C'est une révolution silencieuse."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">TR</div>
-        <div>
-          <div class="testi-name">Trésorier Principal</div>
-          <div class="testi-role">Trésor Public Municipal</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card reveal">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"Avec INTEGA GATE, nos citoyens n'ont plus besoin de se déplacer pour 80% de leurs démarches. La file d'attente au guichet a diminué de 70%. L'impact est visible chaque jour."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">MA</div>
-        <div>
-          <div class="testi-name">Secrétaire Général</div>
-          <div class="testi-role">Mairie Centrale</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section" id="demo">
-  <h2 class="reveal">Prêt à digitaliser votre administration ?</h2>
-  <p class="reveal">Demandez une démonstration gratuite et personnalisée. Notre équipe vous accompagne de A à Z.</p>
-  <div class="cta-actions reveal">
-    <a href="#contact" class="btn-primary demo-trigger">Demander une démo gratuite →</a>
-    <a href="#solutions" class="btn-secondary">Voir tous les modules</a>
-  </div>
-</section>
-
-<!-- DEMO MODAL -->
-<div class="demo-modal" id="demo-modal">
-  <div class="modal-content">
-    <button class="modal-close" id="modal-close">&times;</button>
-    <h3>Demander une démo</h3>
-    <p>Remplissez ce formulaire et notre équipe vous contactera sous 24h pour planifier une démonstration personnalisée de la plateforme INTEGA.</p>
-    <form>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="nom">Nom</label>
-          <input type="text" id="nom" name="nom" required>
-        </div>
-        <div class="form-group">
-          <label for="prenom">Prénom</label>
-          <input type="text" id="prenom" name="prenom" required>
-        </div>
-        <div class="form-group full-width">
-          <label for="fonction">Fonction</label>
-          <input type="text" id="fonction" name="fonction" required>
-        </div>
-        <div class="form-group full-width">
-          <label for="entreprise">Entreprise / Administration</label>
-          <input type="text" id="entreprise" name="entreprise" required>
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-          <label for="numero">Numéro de téléphone</label>
-          <input type="tel" id="numero" name="numero" required>
-        </div>
-        <div class="form-group full-width">
-          <label for="message">Votre message (facultatif)</label>
-          <textarea id="message" name="message"></textarea>
-        </div>
-        <button type="submit" class="form-submit">Envoyer la demande</button>
-      </div>
-    </form>
   </div>
 </div>
 
-<!-- FOOTER -->
-<footer id="contact">
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="footer-logo">INTE<span>GA</span></div>
-      <p class="footer-desc">Intelligence Tech pour la Gestion des Administrations. L'éditeur de référence des logiciels publics en Afrique francophone.</p>
-      <div style="margin-top: 1.5rem; display: flex; gap: 0.8rem;">
-        <a href="#" style="color: var(--gold); font-size: 0.8rem; text-decoration: none; border: 1px solid rgba(201,168,76,0.3); padding: 0.4rem 0.8rem; border-radius: 4px;">LinkedIn</a>
-        <a href="#" style="color: var(--gold); font-size: 0.8rem; text-decoration: none; border: 1px solid rgba(201,168,76,0.3); padding: 0.4rem 0.8rem; border-radius: 4px;">Twitter / X</a>
-        <a href="#" style="color: var(--gold); font-size: 0.8rem; text-decoration: none; border: 1px solid rgba(201,168,76,0.3); padding: 0.4rem 0.8rem; border-radius: 4px;">YouTube</a>
+<!-- ════════ FOOTER (masqué sur onboarding/dashboard) ════════ -->
+<footer id="siteFooter">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="logo">INTE<span style="color:var(--accent)">GA</span></div>
+        <p>Intega conçoit des logiciels métiers souverains pour l'Afrique francophone. CEARA est son module d'intelligence de l'expérience client.</p>
+        <div style="font-size:13.5px;color:#bcd0cd;margin-top:14px;line-height:1.8"><a>pierre@intega.africa</a><br><a>intega.africa</a></div>
       </div>
+      <div class="foot-col"><h5>CEARA</h5><a onclick="goView('ceara')">Présentation</a><a onclick="goView('ceara');setTimeout(()=>scrollToId('canaux'),100)">Canaux</a><a onclick="goView('ceara');setTimeout(()=>scrollToId('tarifs'),100)">Tarifs</a><a onclick="goView('onboarding')">Démarrer</a></div>
+      <div class="foot-col"><h5>Intega</h5><a onclick="goView('intega')">Accueil</a><a onclick="goView('intega');setTimeout(()=>scrollToId('produits'),100)">Solutions</a><a onclick="goView('dashboard')">Démo dashboard</a></div>
     </div>
-    <div class="footer-col">
-      <h5>Solutions</h5>
-      <ul>
-        <li><a href="#">INTEGA RH</a></li>
-        <li><a href="#">INTEGA DOC</a></li>
-        <li><a href="#">INTEGA STOCK</a></li>
-        <li><a href="#">INTEGA ERP</a></li>
-        <li><a href="#">INTEGA CRM</a></li>
-        <li><a href="#">INTEGA GATE</a></li>
-        <li><a href="#">INTEGA PAY</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h5>Entreprise</h5>
-      <ul>
-        <li><a href="#">À propos</a></li>
-        <li><a href="#">Notre équipe</a></li>
-        <li><a href="#">Carrières</a></li>
-        <li><a href="#">Partenaires</a></li>
-        <li><a href="#">Presse</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h5>Contact</h5>
-      <ul>
-        <li><a href="#">Demander une démo</a></li>
-        <li><a href="#">Support technique</a></li>
-        <li><a href="#">Devenir revendeur</a></li>
-        <li><a href="mailto:contact@intega.africa">contact@intega.africa</a></li>
-        <li><a href="#">intega.africa</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 INTEGA · Intelligence Tech pour la Gestion des Administrations</span>
-    <span><a href="#">Politique de confidentialité</a> · <a href="#">CGU</a> · Fait en Afrique 🌍</span>
+    <div class="foot-bottom"><span>© 2026 Intega — CEARA. Tous droits réservés.</span><span>Afrique francophone · Données hébergées localement</span></div>
   </div>
 </footer>
 
+<style>
+/* ═══ ONBOARDING ═══ */
+.onb{display:flex;min-height:calc(100vh - 66px)}
+.onb-aside{width:340px;background:var(--ink);color:#fff;padding:38px 34px;flex-shrink:0;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.onb-aside::after{content:'';position:absolute;bottom:-60px;right:-60px;width:260px;height:260px;border-radius:50%;border:1px solid rgba(124,179,66,.15)}
+.onb-brand{margin-bottom:8px}
+.onb-tag{font-size:13px;color:rgba(255,255,255,.65);margin:28px 0 34px;line-height:1.6;position:relative;z-index:1}
+.onb-steps{position:relative;z-index:1}
+.onb-step{display:flex;align-items:center;gap:14px;padding:11px 0;opacity:.45;transition:.3s}
+.onb-step.active{opacity:1}.onb-step.done{opacity:.85}
+.onb-dot{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;font-family:'Space Grotesk';transition:.3s}
+.onb-step.active .onb-dot{border-color:var(--accent);background:var(--accent);color:var(--ink)}
+.onb-step.done .onb-dot{border-color:var(--accent-bright);background:var(--accent-bright);color:var(--ink)}
+.onb-step .sl{font-size:14px;font-weight:600}.onb-step .ss{font-size:11px;color:rgba(255,255,255,.5)}
+.onb-main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--paper)}
+.onb-card{width:100%;max-width:480px}
+.onb-card h1{font-size:27px;color:var(--ink);margin-bottom:8px}
+.onb-card .lead{font-size:14px;color:var(--muted);margin-bottom:26px;line-height:1.55}
+.progress-mini{height:4px;background:var(--line);border-radius:2px;margin-bottom:28px;overflow:hidden}
+.progress-mini span{display:block;height:100%;background:var(--accent);border-radius:2px;transition:.4s}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:7px}
+.field input,.field select{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:13px 14px;font-size:15px;font-family:inherit;color:var(--text);background:#fff;transition:.15s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,179,66,.12)}
+.field .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
+.frow{display:flex;gap:12px}.frow .field{flex:1}
+.choice-grid{display:grid;gap:10px;grid-template-columns:repeat(3,1fr)}
+.choice{border:1.5px solid var(--line);border-radius:12px;padding:13px;cursor:pointer;transition:.15s;background:#fff;text-align:center}
+.choice:hover{border-color:var(--accent)}
+.choice.sel{border-color:var(--ink);background:rgba(124,179,66,.1);box-shadow:0 0 0 3px rgba(8,38,40,.05)}
+.choice .ic{font-size:20px;margin-bottom:5px}.choice .t{font-size:13px;font-weight:700;color:var(--ink)}.choice .d{font-size:10.5px;color:var(--muted);margin-top:2px}
+.chan{display:flex;align-items:center;gap:13px;border:1.5px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;transition:.15s;background:#fff;margin-bottom:10px}
+.chan:hover{border-color:var(--accent)}.chan.sel{border-color:var(--ink);background:rgba(124,179,66,.08)}
+.chan .ci{width:42px;height:42px;border-radius:10px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.chan.sel .ci{background:var(--ink);color:#fff}.chan .cb{flex:1}.chan .ct{font-size:14px;font-weight:700;color:var(--ink)}.chan .cd{font-size:11.5px;color:var(--muted)}
+.chan .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;transition:.15s}
+.chan.sel .ck{background:var(--ink);border-color:var(--ink)}
+.ps-mgr{background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:16px;margin-bottom:18px}
+.ps-mgr-h{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}.ps-mgr-d{font-size:11.5px;color:var(--muted);margin-bottom:13px}
+.paywall{border:1.5px dashed var(--accent);border-radius:13px;padding:14px 16px;background:rgba(124,179,66,.06);margin-bottom:4px;cursor:pointer;transition:.15s}
+.paywall:hover{box-shadow:0 4px 14px rgba(124,179,66,.18)}
+.paywall-top{display:flex;align-items:center;gap:13px}
+.pw-ic{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0}
+.pw-t{font-size:13.5px;font-weight:700;color:var(--ink)}.pw-d{font-size:11.5px;color:var(--muted);margin-top:2px}.pw-lock{margin-left:auto;opacity:.5}
+.onb-actions{display:flex;gap:12px;margin-top:28px}
+.onb-actions .btn{font-weight:600}.btn-primary.full{flex:1;justify-content:center}
+.trust{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted);margin-top:18px}
+.success{text-align:center}
+.success .badge2{width:80px;height:80px;border-radius:50%;background:rgba(124,179,66,.15);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 18px;animation:pop .5s}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.verif{text-align:left;margin:6px 0 18px}
+.verif-step{display:flex;gap:14px;padding:14px;border-radius:13px;border:1.5px solid var(--line);background:#fff;margin-bottom:11px}
+.verif-step.done{border-color:var(--accent);background:rgba(124,179,66,.07)}.verif-step.active{border-color:var(--amber);background:rgba(214,137,16,.06)}
+.vs-dot{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;position:relative;font-family:'Space Grotesk'}
+.verif-step.done .vs-dot{background:var(--accent);color:#fff}.verif-step.active .vs-dot{background:var(--amber);color:#fff}
+.vs-t{font-size:14px;font-weight:700;color:var(--ink)}.vs-d{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.vs-tag{display:inline-block;margin-top:7px;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:11px;background:var(--accent);color:#fff;font-family:'IBM Plex Mono'}
+.vs-tag.pending{background:#fff;color:var(--amber);border:1px solid var(--amber)}
+.pulse{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--amber);opacity:.4;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.4}70%{transform:scale(1.5);opacity:0}100%{opacity:0}}
+.qr-preview{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:18px;margin:18px 0;display:flex;align-items:center;gap:18px;text-align:left}
+.qr-preview svg{display:block;border-radius:8px}
+.qr-info .t{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}.qr-info .d{font-size:12px;color:var(--muted);line-height:1.5}
+.qr-info .lnk{font-size:12px;color:var(--ink-soft);font-family:'IBM Plex Mono';margin-top:6px}
+.free-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--accent);color:#fff;margin-left:4px}
+.recap{background:var(--paper-2);border-radius:12px;padding:16px;text-align:left;margin-bottom:6px}
+.recap-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0}.recap-line .k{color:var(--muted)}.recap-line .v{color:var(--ink);font-weight:600}
+/* paywall modal */
+.overlay{position:fixed;inset:0;background:rgba(8,38,40,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px;z-index:200}
+.overlay.show{display:flex;animation:fade .2s}
+.modal{background:var(--paper);border-radius:20px;max-width:760px;width:100%;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.modal-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:6px}.modal-head h2{font-size:22px;color:var(--ink);flex:1}
+.modal-close{background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer}
+.modal-sub{font-size:13.5px;color:var(--muted);margin-bottom:22px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.plan{background:#fff;border:1.5px solid var(--line);border-radius:15px;padding:20px 18px;position:relative;display:flex;flex-direction:column}
+.plan.rec{border-color:var(--ink);box-shadow:0 0 0 3px rgba(124,179,66,.12)}
+.plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--ink);font-size:10px;font-weight:800;padding:3px 14px;border-radius:11px;font-family:'IBM Plex Mono'}}
+.plan-name{font-size:16px;font-weight:800;color:var(--ink);font-family:'Space Grotesk'}
+.plan-pts{font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:2px}
+.plan-price{font-size:25px;font-weight:800;color:var(--ink);margin:12px 0 2px;font-family:'Space Grotesk'}.plan-price span{font-size:12px;color:var(--muted);font-weight:400}
+.plan-feat{list-style:none;margin:14px 0 18px;flex:1}.plan-feat li{font-size:12.5px;color:var(--text);padding:5px 0;display:flex;gap:8px}.plan-feat li::before{content:'✓';color:var(--accent);font-weight:700}
+.plan-btn{border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%}
+.plan-btn.primary{background:var(--accent);color:var(--ink)}.plan-btn.ghost{background:#fff;border:1.5px solid var(--ink);color:var(--ink)}
+.modal-foot{font-size:11.5px;color:var(--muted);text-align:center;margin-top:18px}
+
+/* ═══ DASHBOARD ═══ */
+.dash{display:flex;min-height:calc(100vh - 66px)}
+.dside{width:240px;background:var(--ink);color:var(--muted-on-ink);flex-shrink:0;display:flex;flex-direction:column}
+.dside-logo{padding:20px 22px 16px;font-family:'Space Grotesk';font-weight:700;font-size:20px;color:#fff;border-bottom:1px solid var(--line-dark)}
+.dside-logo span{color:var(--accent)}.dside-logo .by{font-family:'IBM Plex Mono';font-size:9px;color:var(--muted-on-ink);letter-spacing:.1em;display:block;margin-top:2px;font-weight:400}
+.dside-org{padding:14px 22px;border-bottom:1px solid var(--line-dark)}
+.dside-org .lab{font-family:'IBM Plex Mono';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-on-ink)}
+.dside-org .nm{color:#fff;font-weight:600;font-size:14px;margin-top:3px}.dside-org .pl{font-size:11px;color:var(--accent-bright);margin-top:1px}
+.dside-nav{flex:1;padding:14px 12px;list-style:none}
+.dside-nav li{padding:10px 14px;border-radius:9px;margin-bottom:2px;font-size:13.5px;cursor:pointer;display:flex;align-items:center;gap:11px;transition:.15s;position:relative}
+.dside-nav li:hover{background:rgba(255,255,255,.05);color:#fff}
+.dside-nav li.active{background:rgba(124,179,66,.16);color:#fff}
+.dside-nav li.active::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;background:var(--accent);border-radius:2px}
+.dside-nav li .ic{font-size:15px;width:18px;text-align:center}
+.dside-nav li .badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.dside-foot{padding:14px 22px;border-top:1px solid var(--line-dark);font-size:11px;color:var(--muted-on-ink);line-height:1.7}
+.dmain{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--paper-2)}
+.dtop{background:var(--paper);border-bottom:1px solid var(--line);padding:16px 30px;display:flex;align-items:center;justify-content:space-between}
+.dtop h1{font-size:20px;color:var(--ink)}.dsub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.pill{font-family:'IBM Plex Mono';font-size:11px;color:var(--accent);background:rgba(124,179,66,.14);padding:6px 12px;border-radius:20px}
+.tb-btn{font-size:13px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;cursor:pointer;font-family:inherit}.tb-btn:hover{border-color:var(--ink)}
+.dcontent{padding:26px 30px;flex:1}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.kpi .lab{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kpi .val{font-family:'Space Grotesk';font-size:30px;font-weight:600;color:var(--ink);margin-top:8px;line-height:1}.kpi .val small{font-size:15px;color:var(--muted);font-weight:400}
+.kpi .trend{font-size:12px;margin-top:7px}.kpi .trend.up{color:#3d7a2e}.kpi .trend.down{color:var(--red)}
+.grid-2{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:16px}
+.grid-2b{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.panel-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.panel-h h3{font-size:15px;color:var(--ink)}
+.chart{display:flex;align-items:flex-end;gap:8px;height:180px;padding-top:10px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.chart .bar{width:100%;background:linear-gradient(var(--accent),var(--accent-bright));border-radius:5px 5px 0 0;transition:height .9s cubic-bezier(.2,.7,.3,1);min-height:3px}
+.chart .xl{font-size:10.5px;color:var(--muted);font-family:'IBM Plex Mono'}
+.spark{width:100%;height:170px}
+.watch-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}.watch-row:last-child{border-bottom:none}
+.watch-row .nm{font-size:13px;font-weight:600;color:var(--ink)}.watch-row .ct{font-size:11px;color:var(--muted)}.watch-row .sc{display:flex;align-items:center;gap:9px}
+.score-chip{font-family:'Space Grotesk';font-weight:700;font-size:13px;padding:3px 11px;border-radius:20px;color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);font-weight:500}
+tbody td{padding:13px 12px;border-bottom:1px solid var(--line)}tbody tr:last-child td{border-bottom:none}tbody tr:hover{background:var(--paper)}
+.tag{display:inline-block;background:var(--paper-2);color:var(--ink);font-size:11px;padding:3px 9px;border-radius:8px}.tag.num{background:rgba(124,179,66,.14);color:#3d7a2e}
+.verbatim{border:1px solid var(--line);border-radius:11px;padding:15px;margin-bottom:11px;display:flex;gap:14px;background:#fff}
+.verbatim .vq{flex:1}.verbatim .vq p{font-size:13.5px;color:var(--text);font-style:italic;line-height:1.5;margin-bottom:9px}
+.verbatim .vtags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.verbatim .meta{font-size:11px;color:var(--muted)}
+.vscore{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:17px;flex-shrink:0}
+.vfilter{display:flex;gap:8px;margin-bottom:16px}.vfilter button{font-size:12.5px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:20px;padding:6px 15px;cursor:pointer;font-family:inherit}.vfilter button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.alert{display:flex;gap:13px;align-items:flex-start;border:1px solid var(--line);border-left-width:3px;border-radius:11px;padding:15px;margin-bottom:11px;background:#fff}
+.alert.crit{border-left-color:var(--red)}.alert.high{border-left-color:var(--amber)}.alert.med{border-left-color:var(--accent)}
+.alert .ah{display:flex;justify-content:space-between;width:100%}.alert h4{font-size:14px;color:var(--ink)}.alert p{font-size:12.5px;color:var(--muted);margin-top:4px}
+.alert .at{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono'}.alert .ab{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:12px;cursor:pointer;flex-shrink:0;align-self:center;font-family:inherit}
+.catrow{margin-bottom:12px}.catrow .ct-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}.catrow .ct-top .nm{font-weight:600;color:var(--ink)}
+.catrow .ct-bar{height:7px;background:var(--paper-2);border-radius:4px;overflow:hidden}.catrow .ct-fill{height:100%;border-radius:4px}
+.report-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line)}.report-row:last-child{border-bottom:none}
+.report-row .ri h4{font-size:14px;color:var(--ink)}.report-row .ri p{font-size:12px;color:var(--muted);margin-top:2px}
+@media (max-width:980px){.onb-aside{display:none}.dside{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-2b{grid-template-columns:1fr}.plans{grid-template-columns:1fr}}
+</style>
+
+<!-- pop-up paywall -->
+<div class="overlay" id="paywallOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>Déployez tout votre réseau</h2><button class="modal-close" onclick="closePaywall()">✕</button></div>
+    <p class="modal-sub">Votre premier point de service est gratuit. Pour en ajouter d'autres, choisissez le forfait adapté à la taille de votre réseau.</p>
+    <div class="plans" id="plansGrid"></div>
+    <div class="modal-foot"><span style="color:var(--accent)">🔒</span> Paiement sécurisé · Stripe, Flutterwave & Mobile Money · Sans engagement</div>
+  </div>
+</div>
 <script>
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 80);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  reveals.forEach(el => observer.observe(el));
+// ════════════════════════════════════════════════════════════════════
+// CONFIG — branchement backend (avec repli démo automatique)
+// ════════════════════════════════════════════════════════════════════
+const CEARA_API = {
+  baseUrl: '',          // ex. 'https://api.ceara.africa' — vide = mode démo
+  token: '',            // JWT Supabase de l'utilisateur connecté
+  enabled(){ return !!this.baseUrl && !!this.token; }
+};
+// Pour activer le vrai backend : CEARA_API.baseUrl='https://...'; CEARA_API.token='...';
 
-  // Smooth active nav
-  const sections = document.querySelectorAll('section[id]');
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY + 100;
-    sections.forEach(s => {
-      if (y >= s.offsetTop && y < s.offsetTop + s.offsetHeight) {
-        document.querySelectorAll('.nav-links a').forEach(a => {
-          a.style.color = a.getAttribute('href') === '#' + s.id ? 'var(--gold)' : '';
-        });
-      }
-    });
-  });
+async function apiGet(path){
+  if(!CEARA_API.enabled()) return null;
+  try{
+    const r = await fetch(CEARA_API.baseUrl+path, {headers:{'Authorization':'Bearer '+CEARA_API.token}});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j = await r.json();
+    return j.data!==undefined ? j.data : j;
+  }catch(e){ console.warn('CEARA API indisponible, repli démo:', e.message); return null; }
+}
 
-  // Demo Modal
-  const demoModal = document.getElementById('demo-modal');
-  const demoTriggers = document.querySelectorAll('.demo-trigger');
-  const closeModal = document.getElementById('modal-close');
+// ════════════════════════════════════════════════════════════════════
+// ROUTEUR SPA
+// ════════════════════════════════════════════════════════════════════
+const VIEWS = ['intega','ceara','onboarding','dashboard'];
+const NAV_CONFIG = {
+  intega:{
+    links:[['Modules','produits'],['Pour qui','pour-qui'],['Méthode','methode-intega'],['Cas d\'usage','cas-usage'],['FAQ','faq']],
+    cta:`<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:500">Nouveau — analysez vos retours clients par IA</span><a class="btn btn-primary" onclick="goView('ceara')">Découvrir CEARA →</a></div>`,
+    logo:'INTE<span>GA</span>'
+  },
+  ceara:{
+    links:[['Méthode','canaux'],['Canaux','canaux'],['Tarifs','tarifs']],
+    cta:`<a class="btn btn-ghost" onclick="goView('intega')">← Intega</a><a class="btn btn-primary" onclick="goView('onboarding')">Démarrer →</a>`,
+    logo:'CE<span>ARA</span><span class="by">by Intega</span>'
+  },
+  onboarding:{ hide:true },
+  dashboard:{ hide:true },
+};
 
-  if (demoModal && demoTriggers.length > 0 && closeModal) {
-    demoTriggers.forEach(trigger => {
-      trigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        demoModal.classList.add('active');
-      });
-    });
-
-    closeModal.addEventListener('click', () => {
-      demoModal.classList.remove('active');
-    });
-
-    demoModal.addEventListener('click', (e) => {
-      if (e.target === demoModal) {
-        demoModal.classList.remove('active');
-      }
-    });
+function goView(v){
+  if(!VIEWS.includes(v)) v='intega';
+  VIEWS.forEach(x=>document.getElementById('view-'+x).classList.toggle('active', x===v));
+  const nav=document.querySelector('header.nav'), footer=document.getElementById('siteFooter');
+  const cfg=NAV_CONFIG[v];
+  if(cfg.hide){ nav.style.display='none'; footer.style.display='none'; }
+  else{
+    nav.style.display=''; footer.style.display='';
+    document.getElementById('navLogo').innerHTML=cfg.logo;
+    document.getElementById('navLogo').onclick=()=>goView(v==='ceara'?'ceara':'intega');
+    document.getElementById('navLinks').innerHTML=cfg.links.map(([t,id])=>`<a onclick="scrollToId('${id}')">${t}</a>`).join('');
+    document.getElementById('navCta').innerHTML=cfg.cta;
   }
-</script>
+  window.scrollTo(0,0);
+  if(v==='onboarding') initOnboarding();
+  if(v==='dashboard') initDashboard();
+  if(v==='ceara') renderPricing();
+}
+function scrollToId(id){ const e=document.getElementById(id); if(e) e.scrollIntoView({behavior:'smooth'}); }
+function toggleFaq(btn){ const it=btn.closest('.faq-item'); const wasOpen=it.classList.contains('open'); it.parentElement.querySelectorAll('.faq-item').forEach(x=>x.classList.remove('open')); if(!wasOpen) it.classList.add('open'); }
+function moduleSoon(name){ alert(name+' — module en développement.\nLa page dédiée arrivera prochainement. CEARA est disponible dès aujourd\'hui.'); }
 
+// ════════════════════════════════════════════════════════════════════
+// LANDING — grille tarifaire
+// ════════════════════════════════════════════════════════════════════
+const PLANS=[
+  {id:'starter',name:'Starter',price:'75 000',pts:'Jusqu\'à 3 points',feat:['3 points de service','500 retours/mois','Tableau de bord temps réel','1 rapport mensuel'],rec:false},
+  {id:'growth',name:'Growth',price:'185 000',pts:'Jusqu\'à 10 points',feat:['10 points de service','2 500 retours/mois','Benchmark inter-sites','Alertes automatiques','Rapport régulateur'],rec:true},
+  {id:'enterprise',name:'Enterprise',price:'450 000+',pts:'Illimité',feat:['Points illimités','API & core banking','Marque blanche','Hébergement souverain','Support dédié'],rec:false},
+];
+function renderPricing(){
+  const el=document.getElementById('pricingCards'); if(!el||el.dataset.done) return;
+  el.innerHTML=PLANS.map(p=>`<div class="card reveal" style="${p.rec?'border-color:var(--ink);box-shadow:0 20px 50px -28px rgba(8,38,40,.4)':''}">
+    ${p.rec?'<div class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600">Recommandé</div>':'<div style="height:15px"></div>'}
+    <h4 style="font-size:20px">${p.name}</h4>
+    <div style="font-family:Space Grotesk;font-size:32px;font-weight:700;color:var(--ink);margin:12px 0 2px">${p.price} <span style="font-size:14px;color:var(--muted);font-weight:400">FCFA/mois</span></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:18px">${p.pts}</div>
+    <ul style="list-style:none;flex:1;margin-bottom:20px">${p.feat.map(f=>`<li style="font-size:13.5px;padding:7px 0;display:flex;gap:9px"><span style="color:var(--accent);font-weight:700">✓</span>${f}</li>`).join('')}</ul>
+    <a class="btn ${p.rec?'btn-primary':'btn-ghost'}" style="justify-content:center" onclick="goView('onboarding')">Choisir ${p.name}</a>
+  </div>`).join('');
+  el.dataset.done='1';
+  io && el.querySelectorAll('.reveal').forEach(x=>io.observe(x));
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ONBOARDING
+// ════════════════════════════════════════════════════════════════════
+const OSTEPS=[['Votre compte','Identité du responsable'],['Votre structure','Forme juridique OHADA'],['Point de service','Votre 1er point — gratuit'],['Canaux de collecte','Comment vous écoutez'],['Vérification','Email & appel']];
+const OD={fullName:'',email:'',phone:'',orgName:'',country:'CG',legalForm:'',rccm:'',niu:'',ps:{name:'',type:'agence',mgrName:'',mgrPhone:'',mgrEmail:''},channels:{whatsapp:true,qr:true,sms:false,web:false}};
+let ostep=0, oInit=false;
+const COUNTRIES=[['CG','Congo 🇨🇬 (CEMAC)'],['BJ','Bénin 🇧🇯 (UEMOA)'],['CI','Côte d\'Ivoire 🇨🇮 (UEMOA)'],['CM','Cameroun 🇨🇲 (CEMAC)'],['SN','Sénégal 🇸🇳 (UEMOA)'],['GA','Gabon 🇬🇦 (CEMAC)'],['TG','Togo 🇹🇬 (UEMOA)'],['BF','Burkina Faso 🇧🇫 (UEMOA)'],['ML','Mali 🇲🇱 (UEMOA)'],['TD','Tchad 🇹🇩 (CEMAC)'],['NE','Niger 🇳🇪 (UEMOA)'],['CF','Centrafrique 🇨🇫 (CEMAC)']];
+const LEGAL=[['SA','SA','Anonyme'],['SARL','SARL','Resp. Limitée'],['SAS','SAS','Simplifiée'],['SUARL','SARLU','Uniperson.'],['SCS','SCS','Commandite'],['GIE','GIE','Groupement'],['EI','Étab.','Public'],['ONG','ONG','Association'],['AUTRE','Autre','—']];
+
+function initOnboarding(){ if(!oInit){ oInit=true; } renderOnb(); }
+function renderOnbSteps(){ document.getElementById('onbSteps').innerHTML=OSTEPS.map((s,i)=>`<div class="onb-step ${i===ostep?'active':i<ostep?'done':''}"><div class="onb-dot">${i<ostep?'✓':i+1}</div><div><div class="sl">${s[0]}</div><div class="ss">${s[1]}</div></div></div>`).join(''); }
+function oprog(){ return `<div class="progress-mini"><span style="width:${(ostep+1)/OSTEPS.length*100}%"></span></div>`; }
+function ov(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
+
+function renderOnb(){
+  renderOnbSteps();
+  const c=document.getElementById('onbCard');
+  if(ostep===0){
+    c.innerHTML=`${oprog()}<span class="eyebrow">Étape 1 sur 5</span><h1 style="margin-top:10px">Créons votre accès</h1><p class="lead">Vous piloterez l'écoute client. Commençons par vous.</p>
+      <div class="field"><label>Votre nom complet</label><input id="fullName" placeholder="Ex. Pierre M'PELE" value="${OD.fullName}"></div>
+      <div class="field"><label>Email professionnel</label><input id="email" type="email" placeholder="vous@structure.com" value="${OD.email}"><div class="hint">Un lien de confirmation y sera envoyé.</div></div>
+      <div class="field"><label>Téléphone professionnel</label><input id="phone" type="tel" placeholder="+242 06 000 00 00" value="${OD.phone}"><div class="hint">Notre équipe vous appellera pour activer le compte.</div></div>
+      <div class="field"><label>Nom de votre structure</label><input id="orgName" placeholder="Ex. MUCODEC, Ecobank…" value="${OD.orgName}"></div>
+      <div class="onb-actions"><button class="btn btn-primary full" id="onbNext" onclick="onbNext(0)">Continuer →</button></div>
+      <div class="trust">🔒 Vos données sont chiffrées et ne sont jamais revendues.</div>`;
+    const chk=()=>{document.getElementById('onbNext').disabled=!(ov('fullName')&&ov('email')&&ov('phone')&&ov('orgName'));};
+    ['fullName','email','phone','orgName'].forEach(id=>document.getElementById(id).addEventListener('input',chk)); chk();
+  }
+  else if(ostep===1){
+    c.innerHTML=`${oprog()}<span class="eyebrow">Étape 2 sur 5</span><h1 style="margin-top:10px">Votre structure</h1><p class="lead">Quelques informations légales pour personnaliser votre espace selon le droit OHADA.</p>
+      <div class="field"><label>Pays d'immatriculation</label><select id="country">${COUNTRIES.map(([v,n])=>`<option value="${v}" ${OD.country===v?'selected':''}>${n}</option>`).join('')}</select></div>
+      <div class="field"><label>Forme juridique</label><div class="choice-grid">${LEGAL.map(([v,t,d])=>`<div class="choice ${OD.legalForm===v?'sel':''}" onclick="OD.legalForm='${v}';renderOnb()"><div class="t">${t}</div><div class="d">${d}</div></div>`).join('')}</div></div>
+      <div class="frow"><div class="field"><label>N° RCCM</label><input id="rccm" placeholder="CG-BZV-01-2024-B12-00345" value="${OD.rccm}"><div class="hint">Registre du Commerce</div></div>
+      <div class="field"><label>NIU / NIF <span style="color:var(--muted);font-weight:400">(facultatif)</span></label><input id="niu" placeholder="Identifiant fiscal" value="${OD.niu}"></div></div>
+      <div class="onb-actions"><button class="btn btn-ghost" onclick="ostep=0;renderOnb()">← Retour</button><button class="btn btn-primary full" onclick="onbNext(1)">Continuer →</button></div>`;
+  }
+  else if(ostep===2){
+    c.innerHTML=`${oprog()}<span class="eyebrow">Étape 3 sur 5</span><h1 style="margin-top:10px">Votre premier point de service</h1><p class="lead">L'endroit où vos clients vous rencontrent : agence, guichet, station, siège… Le premier est <b>gratuit</b>.</p>
+      <div class="field"><label>Nom du point de service</label><input id="psName" placeholder="Ex. Agence Centre-Ville" value="${OD.ps.name}"></div>
+      <div class="field"><label>Type</label><div class="choice-grid">${[['agence','🏦','Agence'],['guichet','🪟','Guichet'],['station','⛽','Station'],['siege','🏢','Siège'],['hotline','📞','Hotline'],['autre','📍','Autre']].map(([v,ic,t])=>`<div class="choice ${OD.ps.type===v?'sel':''}" onclick="saveMgr();OD.ps.type='${v}';renderOnb()"><div class="ic">${ic}</div><div class="t" style="font-size:13px">${t}</div></div>`).join('')}</div></div>
+      <div class="ps-mgr"><div class="ps-mgr-h">👤 Responsable de ce point de service</div><div class="ps-mgr-d">La personne qui recevra les alertes et traitera les réclamations.</div>
+        <div class="field" style="margin-bottom:12px"><input id="mgrName" placeholder="Nom du responsable" value="${OD.ps.mgrName}"></div>
+        <div class="frow"><div class="field" style="margin-bottom:0"><input id="mgrPhone" type="tel" placeholder="Téléphone" value="${OD.ps.mgrPhone}"></div><div class="field" style="margin-bottom:0"><input id="mgrEmail" type="email" placeholder="Email" value="${OD.ps.mgrEmail}"></div></div></div>
+      <div class="paywall" onclick="openPaywall()"><div class="paywall-top"><span class="pw-ic">＋</span><div><div class="pw-t">Ajouter un autre point de service</div><div class="pw-d">Le 1er est gratuit. À partir du 2ème, choisissez un forfait.</div></div><span class="pw-lock">🔒</span></div></div>
+      <div class="onb-actions"><button class="btn btn-ghost" onclick="ostep=1;renderOnb()">← Retour</button><button class="btn btn-primary full" onclick="onbNext(2)">Continuer →</button></div>`;
+  }
+  else if(ostep===3){
+    const ch=[['whatsapp','💬','WhatsApp','Canal dominant. Envoi auto post-visite.'],['qr','📷','QR Code','Affiché en point de service. Sans appli.'],['sms','✉️','SMS','Pour les zones à faible connectivité.'],['web','🌐','Lien web','À partager par email ou réseaux.']];
+    c.innerHTML=`${oprog()}<span class="eyebrow">Étape 4 sur 5</span><h1 style="margin-top:10px">Comment collecter les avis ?</h1><p class="lead">Activez un ou plusieurs canaux. WhatsApp et QR sont recommandés pour démarrer.</p>
+      ${ch.map(([k,ic,t,d])=>`<div class="chan ${OD.channels[k]?'sel':''}" onclick="OD.channels.${k}=!OD.channels.${k};renderOnb()"><div class="ci">${ic}</div><div class="cb"><div class="ct">${t}</div><div class="cd">${d}</div></div><div class="ck">${OD.channels[k]?'✓':''}</div></div>`).join('')}
+      <div class="onb-actions"><button class="btn btn-ghost" onclick="ostep=2;renderOnb()">← Retour</button><button class="btn btn-primary full" onclick="onbNext(3)">Terminer l'inscription →</button></div>`;
+  }
+  else if(ostep===4){
+    const slug=(OD.orgName||'demo').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,8)+'-'+Math.random().toString(36).slice(2,6);
+    c.innerHTML=`<div class="success"><div class="badge2">📨</div><h1>Plus qu'une étape : la vérification</h1><p class="lead">Pour sécuriser votre compte, nous procédons en deux temps.</p>
+      <div class="verif">
+        <div class="verif-step done"><div class="vs-dot">✓</div><div><div class="vs-t">1. Email de confirmation envoyé</div><div class="vs-d">Un lien vient d'être envoyé à <b>${OD.email||'votre adresse'}</b>. Cliquez dessus pour confirmer.</div><span class="vs-tag">Envoyé à l'instant</span></div></div>
+        <div class="verif-step active"><div class="vs-dot"><span class="pulse"></span>2</div><div><div class="vs-t">2. Appel de confirmation</div><div class="vs-d">Notre équipe vous appellera au <b>${OD.phone||'votre numéro'}</b> sous 24h pour activer votre espace.</div><span class="vs-tag pending">En attente d'appel</span></div></div>
+      </div>
+      <div class="qr-preview" style="opacity:.7">${onbQR(slug)}<div class="qr-info"><div class="t">${OD.ps.name||'Votre point de service'} <span class="free-pill">Gratuit</span></div><div class="d">Votre 1er QR est réservé, activé dès la fin de la vérification.</div><div class="lnk">ceara.africa/s/${slug}</div></div></div>
+      <div class="recap">
+        <div class="recap-line"><span class="k">Structure</span><span class="v">${OD.orgName||'—'} ${OD.legalForm?'· '+OD.legalForm:''}</span></div>
+        <div class="recap-line"><span class="k">Pays</span><span class="v">${(COUNTRIES.find(x=>x[0]===OD.country)||['','—'])[1]}</span></div>
+        <div class="recap-line"><span class="k">Point de service</span><span class="v">1 inclus · gratuit</span></div>
+        <div class="recap-line"><span class="k">Essai gratuit</span><span class="v" style="color:#3d7a2e">14 jours après activation</span></div>
+      </div>
+      <div class="onb-actions"><button class="btn btn-ghost" onclick="ostep=3;renderOnb()">← Modifier</button><button class="btn btn-primary full" onclick="goView('dashboard')">Voir mon tableau de bord →</button></div>
+      <div class="trust">🔒 Aucune carte bancaire requise. Vérification sous 24h.</div></div>`;
+  }
+}
+function saveMgr(){ OD.ps.name=ov('psName')||OD.ps.name; OD.ps.mgrName=ov('mgrName'); OD.ps.mgrPhone=ov('mgrPhone'); OD.ps.mgrEmail=ov('mgrEmail'); }
+function onbNext(from){
+  if(from===0){OD.fullName=ov('fullName');OD.email=ov('email');OD.phone=ov('phone');OD.orgName=ov('orgName');if(!OD.fullName||!OD.email||!OD.phone||!OD.orgName)return;}
+  if(from===1){OD.country=ov('country');OD.rccm=ov('rccm');OD.niu=ov('niu');if(!OD.legalForm){alert('Choisissez une forme juridique.');return;}}
+  if(from===2){saveMgr();if(!OD.ps.name.trim()){alert('Donnez un nom à votre point de service.');return;}}
+  ostep=from+1; renderOnb();
+}
+function openPaywall(){ saveMgr();
+  document.getElementById('plansGrid').innerHTML=PLANS.map(p=>`<div class="plan ${p.rec?'rec':''}">${p.rec?'<div class="plan-badge">RECOMMANDÉ</div>':''}<div class="plan-name">${p.name}</div><div class="plan-pts">${p.pts}</div><div class="plan-price">${p.price} <span>FCFA/mois</span></div><ul class="plan-feat">${p.feat.map(f=>`<li>${f}</li>`).join('')}</ul><button class="plan-btn ${p.rec?'primary':'ghost'}" onclick="choosePlan('${p.id}')">Choisir ${p.name}</button></div>`).join('');
+  document.getElementById('paywallOverlay').classList.add('show');
+}
+function closePaywall(){ document.getElementById('paywallOverlay').classList.remove('show'); }
+function choosePlan(id){ const p=PLANS.find(x=>x.id===id); closePaywall(); alert(`Démo : forfait ${p.name} (${p.price} FCFA/mois).\nLe paiement (Stripe / Flutterwave · Mobile Money) s'ouvrirait ici.`); }
+function onbQR(seed){ let h=0;for(const c of seed)h=(h*31+c.charCodeAt(0))>>>0;const N=11,cell=7,size=N*cell;function rnd(){h=(h*1103515245+12345)>>>0;return(h>>>16)/65535;}let r=`<rect width="${size}" height="${size}" fill="#fff"/>`;for(let y=0;y<N;y++)for(let x=0;x<N;x++){const f=(x<3&&y<3)||(x>N-4&&y<3)||(x<3&&y>N-4);const on=f?((x===0||x===2||x===N-3||x===N-1)||(y===0||y===2||y===N-3||y===N-1)||(x===1&&y===1)):rnd()>.5;if(on)r+=`<rect x="${x*cell}" y="${y*cell}" width="${cell}" height="${cell}" fill="#082628"/>`;}return `<svg width="84" height="84" viewBox="0 0 ${size} ${size}">${r}</svg>`; }
+
+// ════════════════════════════════════════════════════════════════════
+// DASHBOARD (données démo + branchement backend)
+// ════════════════════════════════════════════════════════════════════
+const DEMO={
+  channels:[{name:'Plateforme imv.sesur.bj',city:'En ligne',type:'Numérique',nps:44,csat:3.8,vol:1840,sent:31,trend:5},{name:'Guichet Cotonou-Port',city:'Cotonou',type:'Physique',nps:28,csat:3.2,vol:1210,sent:8,trend:-11},{name:'Guichet Cotonou-Akpakpa',city:'Cotonou',type:'Physique',nps:51,csat:4.0,vol:864,sent:42,trend:3},{name:'Guichet Parakou',city:'Parakou',type:'Physique',nps:62,csat:4.3,vol:417,sent:55,trend:8},{name:'Support WhatsApp',city:'À distance',type:'Numérique',nps:57,csat:4.1,vol:1320,sent:48,trend:6},{name:'Guichet Porto-Novo',city:'Porto-Novo',type:'Physique',nps:39,csat:3.6,vol:529,sent:24,trend:-3}],
+  trend30:[38,41,39,43,46,44,47,45,48,46,47],
+  vol4:[{l:'Sem 1',v:382},{l:'Sem 2',v:445},{l:'Sem 3',v:521},{l:'Sem 4',v:498}],
+  cats:[{t:'Délai de traitement',n:284,c:'#C0392B'},{t:'Lenteur paiement en ligne',n:218,c:'#D68910'},{t:'Calcul du montant IMV',n:176,c:'#E0A93C'},{t:'Accueil au guichet',n:142,c:'#16514f'},{t:'Justificatif / quittance',n:97,c:'#7CB342'},{t:'Frais perçus',n:64,c:'#9CCC65'}],
+  verbatims:[{client:'Abderaman MOUTOU',kind:'Particulier',text:"J'ai attendu 3 jours pour recevoir ma quittance après paiement. Trop lent pour un service en ligne.",score:2,tags:['Délai de traitement'],chan:'Plateforme imv.sesur.bj',sent:'neg'},{client:'Miami SARL',kind:'Personne morale',text:"Le paiement Mobile Money a échoué deux fois, l'argent débité mais pas de confirmation.",score:1,tags:['Lenteur paiement en ligne'],chan:'Plateforme imv.sesur.bj',sent:'neg'},{client:'Alhadji SAKA',kind:'Particulier',text:"Agent à Parakou très professionnel, m'a tout expliqué calmement, même en langue. Service nickel.",score:9,tags:['Accueil au guichet'],chan:'Guichet Parakou',sent:'pos'},{client:'AGL',kind:'Personne morale',text:"Au port c'est toujours la foule, on perd une demi-journée pour nos dossiers groupés. Il faut un circuit dédié transitaires.",score:3,tags:['Délai de traitement','Accueil au guichet'],chan:'Guichet Cotonou-Port',sent:'neg'},{client:'CFAO Motors Bénin',kind:'Personne morale',text:"Support WhatsApp a répondu vite, problème réglé en 20 minutes. Bravo à l'équipe.",score:10,tags:['Justificatif / quittance'],chan:'Support WhatsApp',sent:'pos'},{client:'Alhadji SAKA',kind:'Particulier',text:"La plateforme est pratique quand ça marche, mais elle rame aux heures de pointe.",score:6,tags:['Lenteur paiement en ligne'],chan:'Plateforme imv.sesur.bj',sent:'neu'}],
+  alerts:[{sev:'crit',t:'Chute NPS — Guichet Cotonou-Port',d:'NPS en baisse de 11 points en 7 jours. Pic de plaintes sur les délais (dossiers AGL et transitaires).',time:'il y a 1h'},{sev:'high',t:'Échecs de paiement en ligne',d:'18 signalements de débits sans confirmation en 24h sur imv.sesur.bj. Miami SARL parmi les cas.',time:'il y a 3h'},{sev:'med',t:'Incompréhension du calcul IMV',d:'Hausse des questions sur le barème pour les véhicules de 10 ans et plus.',time:'il y a 6h'}],
+  grievances:[{ref:'IMV-2026-00342',client:'Miami SARL',cat:'Paiement débité non confirmé',prio:'Urgent',status:'Escaladée',sc:'#C0392B',days:2,owner:'M. José K.'},{ref:'IMV-2026-00338',client:'AGL',cat:'Délai quittance (dossiers groupés)',prio:'Élevée',status:'En cours',sc:'#D68910',days:1,owner:'M. José K.'},{ref:'IMV-2026-00331',client:'Abderaman MOUTOU',cat:'Contestation montant',prio:'Normale',status:'Résolue',sc:'#3d7a2e',days:4,owner:'Elvis'},{ref:'IMV-2026-00325',client:'Alhadji SAKA',cat:'Erreur sur quittance',prio:'Normale',status:'Résolue',sc:'#3d7a2e',days:2,owner:'Jilles Christ'}],
+};
+let DASH=JSON.parse(JSON.stringify(DEMO));   // copie active (écrasée si backend dispo)
+let dsection='overview', vfilter='all', dashInit=false;
+const DTITLES={overview:['Vue d\'ensemble','Expérience des usagers · 30 derniers jours'],channels:['Canaux & guichets','Satisfaction par point de contact'],verbatims:['Verbatims','Retours analysés par l\'IA · français + langues locales'],categories:['Motifs','Répartition des retours négatifs par thème'],grievances:['Doléances','Réclamations avec responsable et délai (SLA)'],alerts:['Alertes','Anomalies détectées automatiquement'],reports:['Rapports','Générés automatiquement pour la direction']};
+function npsColor(n){return n>=50?'#3d7a2e':n>=0?'#D68910':'#C0392B';}
+
+async function initDashboard(){
+  if(!dashInit){
+    dashInit=true;
+    document.getElementById('dnav').addEventListener('click',e=>{const li=e.target.closest('li');if(li){vfilter='all';dsection=li.dataset.s;document.querySelectorAll('#dnav li').forEach(x=>x.classList.toggle('active',x.dataset.s===dsection));renderDash();}});
+  }
+  const live=document.getElementById('dLive'), mode=document.getElementById('dDataMode');
+
+  // 1) Données réelles si backend branché
+  if(CEARA_API.enabled()){
+    mode.textContent='◉ Données live';
+    const byBranch=await apiGet('/api/analytics/by-branch');
+    const verbs=await apiGet('/api/analytics/verbatims?limit=20');
+    const alerts=await apiGet('/api/alerts?status=open');
+    const griev=await apiGet('/api/gov/grievances');
+    if(byBranch) DASH.channels=byBranch.map(b=>({name:b.service_point_name||b.name||'—',city:b.city||'',type:b.type||'Physique',nps:Math.round(b.nps||0),csat:b.csat||0,vol:b.vol||b.total||0,sent:b.sentiment||0,trend:b.trend||0}));
+    if(verbs) DASH.verbatims=verbs.map(v=>({client:v.client||v.author||'Usager',kind:v.kind||'—',text:v.text_response||v.text||'',score:v.nps_score??v.score??0,tags:v.category_tags||v.tags||[],chan:(v.service_points&&v.service_points.name)||v.chan||'',sent:(v.sentiment_label||v.sent||'neu').slice(0,3)}));
+    if(alerts) DASH.alerts=alerts.map(a=>({sev:a.severity==='critical'?'crit':a.severity==='high'?'high':'med',t:a.title,d:a.description,time:a.time||''}));
+    if(griev) DASH.grievances=griev.map(g=>({ref:g.reference_code,client:g.citizen_name||g.client||'—',cat:g.category,prio:g.priority,status:g.status,sc:g.status==='resolved'?'#3d7a2e':g.status==='escalated'?'#C0392B':'#D68910',days:g.days||0,owner:g.assigned_to||'—'}));
+    live.textContent='● Live';
+    document.getElementById('dOrgName').textContent = OD.orgName || 'Mon organisation';
+  }
+  // 2) Nouveau compte issu de l'onboarding → dashboard "vierge" personnalisé
+  else if(OD.orgName){
+    mode.textContent='◐ Nouveau compte';
+    live.textContent='● En attente des 1ers retours';
+    DASH = buildFreshAccount();
+    document.getElementById('dOrgName').textContent = OD.orgName;
+    const planLabel = OD.ps.type ? (OD.ps.type.charAt(0).toUpperCase()+OD.ps.type.slice(1)) : 'Point de service';
+    document.getElementById('dOrgPlan').textContent = (OD.country||'') + ' · Essai 14 jours';
+  }
+  // 3) Démo générique SESUR
+  else {
+    mode.textContent='◐ Mode démo';
+    live.textContent='● Temps réel (démo)';
+    DASH=JSON.parse(JSON.stringify(DEMO));
+    document.getElementById('dOrgName').textContent='SESUR';
+    document.getElementById('dOrgPlan').textContent='Service IMV · Plan Growth';
+  }
+  renderDash();
+}
+
+// Construit un dashboard "compte neuf" à partir des infos d'onboarding
+function buildFreshAccount(){
+  const psName = OD.ps.name || 'Mon point de service';
+  const typeLabel = {agence:'Physique',guichet:'Physique',station:'Physique',siege:'Physique',hotline:'Numérique',autre:'Physique'}[OD.ps.type]||'Physique';
+  const activeChans = Object.entries(OD.channels).filter(([k,v])=>v).map(([k])=>({whatsapp:'Canal WhatsApp',qr:'QR — '+psName,sms:'Canal SMS',web:'Lien web'}[k]));
+  return {
+    fresh:true,
+    psName, mgr:{name:OD.ps.mgrName,phone:OD.ps.mgrPhone,email:OD.ps.mgrEmail},
+    channels: activeChans.map(n=>({name:n,city:OD.ps.name||'',type:n.includes('QR')?'Physique':'Numérique',nps:0,csat:0,vol:0,sent:0,trend:0})),
+    trend30:[0,0,0,0,0,0,0,0,0,0,0],
+    vol4:[{l:'Sem 1',v:0},{l:'Sem 2',v:0},{l:'Sem 3',v:0},{l:'Sem 4',v:0}],
+    cats:[], verbatims:[], alerts:[], grievances:[],
+  };
+}
+
+function renderDash(){
+  document.getElementById('dttl').textContent=DTITLES[dsection][0];
+  document.getElementById('dtsub').textContent=DTITLES[dsection][1];
+  document.getElementById('dcontent').innerHTML=DSEC[dsection]();
+}
+const DSEC={
+  overview(){
+    if(DASH.fresh){
+      const m=DASH.mgr||{};
+      return `<div class="panel" style="background:linear-gradient(135deg,var(--ink),var(--ink-soft));color:#fff;border:none;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="font-size:34px">🎉</div>
+          <div><h3 style="color:#fff;font-size:18px">Bienvenue, ${(OD.fullName||'').split(' ')[0]||'à bord'} !</h3>
+          <p style="color:#bcd0cd;font-size:13px;margin-top:4px">Votre espace <b style="color:#fff">${OD.orgName||''}</b> est prêt. Dès que vos clients commenceront à répondre via votre point de service <b style="color:var(--accent-bright)">${DASH.psName}</b>, vos indicateurs s'afficheront ici en temps réel.</p></div>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="lab">NPS Global</div><div class="val" style="color:var(--muted)">—</div><div class="trend">En attente</div></div>
+        <div class="kpi"><div class="lab">CSAT moyen</div><div class="val" style="color:var(--muted)">—</div><div class="trend">En attente</div></div>
+        <div class="kpi"><div class="lab">Retours collectés</div><div class="val">0</div><div class="trend">Aucun pour l'instant</div></div>
+        <div class="kpi"><div class="lab">Plaintes ouvertes</div><div class="val">0</div><div class="trend">—</div></div>
+      </div>
+      <div class="grid-2b">
+        <div class="panel"><div class="panel-h"><h3>Votre point de service</h3><span class="pill" style="background:rgba(124,179,66,.14)">Gratuit</span></div>
+          <div style="display:flex;align-items:center;gap:13px;padding:8px 0">
+            <div style="width:44px;height:44px;border-radius:11px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-size:21px">${({agence:'🏦',guichet:'🪟',station:'⛽',siege:'🏢',hotline:'📞',autre:'📍'})[OD.ps.type]||'📍'}</div>
+            <div><div style="font-weight:700;color:var(--ink)">${DASH.psName}</div><div style="font-size:12px;color:var(--muted)">${(OD.ps.type||'').charAt(0).toUpperCase()+(OD.ps.type||'').slice(1)} · ${OD.orgName||''}</div></div>
+          </div>
+          ${m.name?`<div style="border-top:1px solid var(--line);margin-top:10px;padding-top:12px"><div class="mono" style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Responsable</div>
+          <div style="font-size:13px;color:var(--ink);font-weight:600">${m.name}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">${m.phone||''}${m.phone&&m.email?' · ':''}${m.email||''}</div></div>`:''}
+        </div>
+        <div class="panel"><div class="panel-h"><h3>Canaux activés</h3></div>
+          ${DASH.channels.length?DASH.channels.map(c=>`<div class="watch-row"><div><div class="nm">${c.name}</div><div class="ct">${c.type}</div></div><span class="pill" style="background:rgba(124,179,66,.14)">Actif</span></div>`).join(''):'<p style="font-size:13px;color:var(--muted)">Aucun canal activé.</p>'}
+          <div style="margin-top:14px;padding:12px;background:var(--paper-2);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.5">💡 Imprimez votre QR code et placez-le à l'accueil pour commencer à collecter des avis.</div>
+        </div>
+      </div>`;
+    }
+    const ch=DASH.channels,tv=ch.reduce((a,c)=>a+c.vol,0)||1;const gN=Math.round(ch.reduce((a,c)=>a+c.nps*c.vol,0)/tv);const gC=(ch.reduce((a,c)=>a+c.csat*c.vol,0)/tv).toFixed(1);const t=DASH.trend30,mx=Math.max(...t),mn=Math.min(...t)-3;const pts=t.map((v,i)=>`${i/(t.length-1)*100},${100-(v-mn)/(mx-mn)*100}`).join(' ');
+    return `<div class="kpis"><div class="kpi"><div class="lab">NPS Global</div><div class="val">${gN}</div><div class="trend up">▲ +6 vs mois préc.</div></div><div class="kpi"><div class="lab">CSAT moyen</div><div class="val">${gC}<small>/5</small></div><div class="trend up">▲ +0.2</div></div><div class="kpi"><div class="lab">Retours collectés</div><div class="val">${tv.toLocaleString('fr')}</div><div class="trend up">▲ +14% ce mois</div></div><div class="kpi"><div class="lab">Plaintes ouvertes</div><div class="val">42</div><div class="trend down">▲ +9 à traiter</div></div></div>
+    <div class="grid-2"><div class="panel"><div class="panel-h"><h3>Tendance NPS — 30 jours</h3><span class="pill">+6 pts</span></div><svg class="spark" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7CB342" stop-opacity=".25"/><stop offset="100%" stop-color="#7CB342" stop-opacity="0"/></linearGradient></defs><polyline points="0,100 ${pts} 100,100" fill="url(#g)"/><polyline points="${pts}" fill="none" stroke="#16514f" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg></div>
+    <div class="panel"><div class="panel-h"><h3>Canaux à surveiller</h3></div>${ch.filter(c=>c.nps<50).sort((a,b)=>a.nps-b.nps).map(c=>`<div class="watch-row"><div><div class="nm">${c.name}</div><div class="ct">${c.city}</div></div><div class="sc"><span class="score-chip" style="background:${npsColor(c.nps)}">${c.nps}</span><span style="font-size:12px;color:${c.trend<0?'#C0392B':'#3d7a2e'}">${c.trend>0?'+':''}${c.trend}</span></div></div>`).join('')}</div></div>
+    <div class="panel"><div class="panel-h"><h3>Volume de retours par semaine</h3></div><div class="chart">${DASH.vol4.map(d=>`<div class="col"><div class="bar" style="height:${d.v/550*100}%"></div><div class="xl">${d.l}</div></div>`).join('')}</div></div>`;},
+  channels(){if(DASH.fresh&&!DASH.channels.some(c=>c.vol))return emptyState('Aucun retour pour l\'instant','Vos canaux sont actifs. Les premiers avis apparaîtront ici dès qu\'un client répondra.');return `<div class="panel"><table><thead><tr><th>Canal</th><th>Type</th><th>NPS</th><th>CSAT</th><th>Volume</th><th>Sentiment</th><th>Tendance</th></tr></thead><tbody>${[...DASH.channels].sort((a,b)=>b.nps-a.nps).map(c=>`<tr><td style="font-weight:600">${c.name}<div style="font-size:11px;color:var(--muted);font-weight:400">${c.city}</div></td><td><span class="tag ${c.type==='Numérique'?'num':''}">${c.type}</span></td><td><span class="score-chip" style="background:${npsColor(c.nps)}">${c.nps}</span></td><td>${c.csat}</td><td>${(c.vol||0).toLocaleString('fr')}</td><td>${c.sent}%</td><td style="color:${c.trend<0?'#C0392B':'#3d7a2e'};font-weight:600">${c.trend>0?'↑':'↓'} ${Math.abs(c.trend)}</td></tr>`).join('')}</tbody></table></div>`;},
+  verbatims(){if(DASH.fresh&&!DASH.verbatims.length)return emptyState('Aucun verbatim','Les retours textuels de vos clients, analysés par l\'IA, s\'afficheront ici.');const list=DASH.verbatims.filter(v=>vfilter==='all'||v.sent===vfilter);const col={neg:'#C0392B',neu:'#D68910',pos:'#3d7a2e'};return `<div class="vfilter">${[['all','Tous'],['neg','Négatifs'],['neu','Neutres'],['pos','Positifs']].map(([k,l])=>`<button class="${vfilter===k?'on':''}" onclick="vfilter='${k}';renderDash()">${l}</button>`).join('')}</div>${list.map(v=>`<div class="verbatim"><div class="vq"><div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><span style="font-weight:700;font-size:13px">${v.client}</span><span class="tag" style="font-size:10px">${v.kind}</span></div><p>« ${v.text} »</p><div class="vtags">${(v.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}<span class="meta">· ${v.chan}</span></div></div><div class="vscore" style="background:${col[v.sent]||'#D68910'}">${v.score}</div></div>`).join('')}`;},
+  categories(){if(DASH.fresh&&!DASH.cats.length)return emptyState('Aucun motif détecté','L\'IA classera automatiquement les retours par thème dès leur arrivée.');const tot=DASH.cats.reduce((a,c)=>a+c.n,0);return `<div class="grid-2b"><div class="panel"><div class="panel-h"><h3>Top motifs — 30 jours</h3></div>${DASH.cats.map(c=>`<div class="catrow"><div class="ct-top"><span class="nm">${c.t}</span><span style="font-weight:700;color:${c.c}">${c.n}</span></div><div class="ct-bar"><div class="ct-fill" style="width:${c.n/DASH.cats[0].n*100}%;background:${c.c}"></div></div></div>`).join('')}</div><div class="panel"><div class="panel-h"><h3>Répartition</h3></div><div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">${DASH.cats.map(c=>`<div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:3px;background:${c.c};flex-shrink:0"></span><span style="flex:1;font-size:13px">${c.t}</span><span class="mono" style="font-size:12px;color:var(--muted)">${(c.n/tot*100).toFixed(0)}%</span></div>`).join('')}</div></div></div>`;},
+  grievances(){if(DASH.fresh&&!DASH.grievances.length)return emptyState('Aucune doléance','Les réclamations de vos clients seront suivies ici, de la réception à la résolution.');return `<div class="panel"><table><thead><tr><th>Référence</th><th>Usager</th><th>Motif</th><th>Responsable</th><th>Priorité</th><th>Délai</th><th>Statut</th></tr></thead><tbody>${DASH.grievances.map(g=>`<tr><td class="mono" style="font-weight:600;font-size:12px">${g.ref}</td><td>${g.client}</td><td style="color:var(--muted)">${g.cat}</td><td>${g.owner}</td><td>${g.prio}</td><td style="color:${g.status==='Escaladée'?'#C0392B':'var(--muted)'}">${g.days} j</td><td><span class="score-chip" style="background:${g.sc};font-size:11px">${g.status}</span></td></tr>`).join('')}</tbody></table></div>`;},
+  alerts(){if(DASH.fresh&&!DASH.alerts.length)return emptyState('Aucune alerte','CEARA vous préviendra automatiquement en cas d\'anomalie (chute de NPS, pic de plaintes…).');return DASH.alerts.map(a=>`<div class="alert ${a.sev}"><div class="ah"><div><h4>${a.t}</h4><p>${a.d}</p></div><span class="at">${a.time}</span></div><button class="ab" onclick="alert('Démo : traitement')">Traiter</button></div>`).join('');},
+  reports(){if(DASH.fresh)return emptyState('Premier rapport en préparation','Votre rapport mensuel sera généré automatiquement à la fin du mois et envoyé à la direction.');const tv=DASH.channels.reduce((a,c)=>a+c.vol,0);const gN=Math.round(DASH.channels.reduce((a,c)=>a+c.nps*c.vol,0)/(tv||1));return `<div class="panel" style="margin-bottom:16px"><div class="panel-h"><h3>Synthèse — Mai 2026</h3><span class="pill">Auto-généré</span></div><div class="kpis" style="margin-bottom:0"><div class="kpi"><div class="lab">NPS global</div><div class="val">${gN}</div></div><div class="kpi"><div class="lab">Retours</div><div class="val">${tv.toLocaleString('fr')}</div></div><div class="kpi"><div class="lab">Plaintes résolues</div><div class="val">73<small>%</small></div></div><div class="kpi"><div class="lab">Délai moyen</div><div class="val">2,4<small>j</small></div></div></div></div><div class="panel"><div class="panel-h"><h3>Historique</h3></div>${['Mai 2026','Avril 2026','Mars 2026'].map(m=>`<div class="report-row"><div class="ri"><h4>Rapport Expérience Usager — ${m}</h4><p>PDF · envoyé à la direction</p></div><button class="tb-btn" onclick="alert('Démo : téléchargement ${m}')">Télécharger</button></div>`).join('')}</div>`;},
+};
+function emptyState(title,sub){return `<div class="panel" style="text-align:center;padding:50px 30px"><div style="font-size:40px;opacity:.5;margin-bottom:14px">📭</div><h3 style="color:var(--ink);font-size:17px">${title}</h3><p style="color:var(--muted);font-size:13.5px;margin-top:8px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.5">${sub}</p></div>`;}
+
+// ════════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════════
+const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+goView('intega');
+</script>
 </body>
 </html>
